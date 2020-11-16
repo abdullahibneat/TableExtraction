@@ -14,7 +14,7 @@ def preProcess(img):
     # Use adaptive thresholding to have only black and white pixels
     # Without adaptive shadows might black out regions in the image
     # Gaussian produces less noise compared to ADAPTIVE_THRESH_MEAN_C
-    threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 2)
     return threshold
 
 
