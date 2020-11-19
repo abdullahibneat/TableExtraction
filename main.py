@@ -29,12 +29,17 @@ def preProcess(img):
     return threshold
 
 
-def findLargestQuadrilateralContour(contours):
+def findLargestQuadrilateralContour(contours, maxArea=None):
+    maxAreaSet = maxArea is not None
     biggest_area = 0
     biggest_contour = None
     for contour in contours:
         # Get the area of this contour
         area = cv2.contourArea(contour)
+
+        # Reassign maxArea if it was originally None
+        if not maxAreaSet:
+            maxArea = area
 
         # Get the length of the perimeter
         perimeter = cv2.arcLength(contour, True)
@@ -44,9 +49,9 @@ def findLargestQuadrilateralContour(contours):
         # edges are curved and not perfectly straight
         approx = cv2.approxPolyDP(contour, 0.01 * perimeter, True)
 
-        # Check if area is bigger than previous contour
+        # Check if area is bigger than previous contour but smaller than or equal to maxArea
         # and if the approximation contains only 4 sides (i.e. quadrilateral)
-        if area > biggest_area and len(approx) == 4:
+        if biggest_area < area <= maxArea and len(approx) == 4:
             biggest_area = area
             biggest_contour = contour
     return [biggest_contour]
