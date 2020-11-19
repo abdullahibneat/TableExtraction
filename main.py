@@ -6,15 +6,20 @@ def preProcess(img):
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
-    # Blur image, kernel size determined by trial and error
-    # Removes noise
-    kernel_size = 7
-    blur = cv2.blur(gray, (kernel_size, kernel_size))
+    # Blur image to remove noise
+    # Determine kernel size by using image height and width
+    height, width, _ = img.shape
+    blur_kernel = (int(height * 0.0025), int(width * 0.0025))
+    print("kernel: " + str(blur_kernel))
+    blur = cv2.blur(gray, blur_kernel)
 
     # Use adaptive thresholding to have only black and white pixels
     # Without adaptive shadows might black out regions in the image
     # Gaussian produces less noise compared to ADAPTIVE_THRESH_MEAN_C
-    threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 2)
+    block_size = blur_kernel[0] + blur_kernel[1]
+    if block_size % 2 == 0:
+        block_size += 1
+    threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, 2)
     return threshold
 
 
