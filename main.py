@@ -22,9 +22,8 @@ def preProcess(img):
     # Use adaptive thresholding to have only black and white pixels
     # Without adaptive shadows might black out regions in the image
     # Gaussian produces less noise compared to ADAPTIVE_THRESH_MEAN_C
-    block_size = blur_kernel[0] + blur_kernel[1]
-    if block_size % 2 == 0:
-        block_size += 1
+    # Block size: above, both kernel values are odd, but block size must be even, therefore add 1.
+    block_size = blur_kernel[0] + blur_kernel[1] + 1
     threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, 2)
     return threshold
 
