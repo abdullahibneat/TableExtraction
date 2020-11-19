@@ -61,6 +61,7 @@ def main():
     # Read image
     img = cv2.imread("sample_table.jpg")
     img_copy = img.copy()
+    height, width, _ = img.shape
 
     # Process image
     processed = preProcess(img_copy)
@@ -69,9 +70,10 @@ def main():
     contours, _ = cv2.findContours(processed, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
     # Find table region
-    # It is assumed the table takes up most of the image, thus it
-    # can be identified by finding the largest contour with 4 sides
-    table_contour = findLargestQuadrilateralContour(contours)
+    # It is assumed the table takes up most of the image (less than 95%),
+    # thus it can be identified by finding the largest contour with 4 sides
+    maxArea = width * height * 0.95
+    table_contour = findLargestQuadrilateralContour(contours, maxArea)
 
     # FOR DEBUG PURPOSES ONLY
     # Create new image with table contour displayed on top of processed image
