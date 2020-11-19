@@ -9,9 +9,15 @@ def preProcess(img):
     # Blur image to remove noise
     # Determine kernel size by using image height and width
     height, width, _ = img.shape
-    blur_kernel = (int(height * 0.0025), int(width * 0.0025))
+    blur_kernel = [int(height * 0.0025), int(width * 0.0025)]
+    # Kernel must have odd values because of GaussianBlur
+    if blur_kernel[0] % 2 == 0:
+        blur_kernel[0] += 1
+    if blur_kernel[1] % 2 == 0:
+        blur_kernel[1] += 1
+    blur_kernel = (blur_kernel[0], blur_kernel[1])
     print("kernel: " + str(blur_kernel))
-    blur = cv2.blur(gray, blur_kernel)
+    blur = cv2.GaussianBlur(gray, blur_kernel, 1)
 
     # Use adaptive thresholding to have only black and white pixels
     # Without adaptive shadows might black out regions in the image
