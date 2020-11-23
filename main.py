@@ -1,5 +1,6 @@
 import cv2
 from matplotlib import pyplot as plt
+import numpy as np
 
 
 def preProcess(img):
@@ -58,6 +59,34 @@ def findLargestQuadrilateralContour(contours, maxArea=None):
     return [biggest_contour], [biggest_contour_approx]
 
 
+def processContour(approx):
+    # Reshape array([x, y], ...) to array( array([x], [y]), ...)
+    approx = approx.reshape((4, 2))
+
+    # Sort points in clockwise order, starting from top left
+    pts = np.zeros((4, 2), dtype=np.float32)
+
+    # Add up all values
+    # Smallest sum = top left point
+    # Largest sum = bottom right point
+    s = approx.sum(axis=1)
+    pts[0] = approx[np.argmin(s)]
+    pts[2] = approx[np.argmax(s)]
+
+    # For the other 2 points, compute difference between all points
+    # Smallest difference = top right point
+    # Largest difference = bottom left point
+    diff = np.diff(approx, axis=1)
+    pts[1] = approx[np.argmin(diff)]
+    pts[3] = approx[np.argmax(diff)]
+
+    # Calculate smallest height and width
+    width = int(min(pts[1][0] - pts[0][0], pts[2][0] - pts[3][0]))
+    height = int(min(pts[3][1] - pts[0][1], pts[2][1] - pts[1][1]))
+
+    return pts, width, height
+
+
 def main():
     # Read image
     img = cv2.imread("sample_table.jpg")
@@ -75,6 +104,7 @@ def main():
     # thus it can be identified by finding the largest contour with 4 sides
     maxArea = width * height * 0.95
     table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
+    table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
     # FOR DEBUG PURPOSES ONLY
     # Create new image with table contour displayed on top of processed image
