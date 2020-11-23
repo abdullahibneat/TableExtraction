@@ -106,6 +106,13 @@ def main():
     table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
     table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
+    # Extract table region
+    # Use warp to extract the table region from the processed image
+    # by mapping table points to a new image of size table_width x table_height
+    target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
+    matrix = cv2.getPerspectiveTransform(table_pts, target_points)
+    warped = cv2.warpPerspective(processed, matrix, (table_width, table_height))
+
     # FOR DEBUG PURPOSES ONLY
     # Create new image with table contour displayed on top of processed image
     table_contour_image = cv2.cvtColor(processed.copy(), cv2.COLOR_GRAY2BGR)
