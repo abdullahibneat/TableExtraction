@@ -32,6 +32,7 @@ def findLargestQuadrilateralContour(contours, maxArea=None):
     maxAreaSet = maxArea is not None
     biggest_area = 0
     biggest_contour = None
+    biggest_contour_approx = None
     for contour in contours:
         # Get the area of this contour
         area = cv2.contourArea(contour)
@@ -53,7 +54,8 @@ def findLargestQuadrilateralContour(contours, maxArea=None):
         if biggest_area < area <= maxArea and len(approx) == 4:
             biggest_area = area
             biggest_contour = contour
-    return [biggest_contour]
+            biggest_contour_approx = approx
+    return [biggest_contour], [biggest_contour_approx]
 
 
 def main():
@@ -72,7 +74,7 @@ def main():
     # It is assumed the table takes up most of the image (less than 95%),
     # thus it can be identified by finding the largest contour with 4 sides
     maxArea = width * height * 0.95
-    table_contour = findLargestQuadrilateralContour(contours, maxArea)
+    table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
 
     # FOR DEBUG PURPOSES ONLY
     # Create new image with table contour displayed on top of processed image
