@@ -114,13 +114,19 @@ def main():
     warped = cv2.warpPerspective(processed, matrix, (table_width, table_height))
 
     # FOR DEBUG PURPOSES ONLY
+    images = [(img, "original"), (processed, "processed")]
+
     # Create new image with table contour displayed on top of processed image
     table_contour_image = cv2.cvtColor(processed.copy(), cv2.COLOR_GRAY2BGR)
     cv2.drawContours(table_contour_image, table_contour, -1, (0, 0, 255), 10)  # Contour
     cv2.drawContours(table_contour_image, table_contour_approx, -1, (0, 255, 0), 10)  # Approximation
+    images.append((table_contour_image, "contour"))
+    images.append((warped, "warped"))
 
-    # Show image
-    plt.imshow(cv2.cvtColor(table_contour_image, cv2.COLOR_BGR2RGB))
+    # Show images
+    for image, title in images:
+        plt.figure(title)
+        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.show()
 
 
