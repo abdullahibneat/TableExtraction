@@ -26,7 +26,14 @@ def preProcess(img):
     # Block size: above, both kernel values are odd, but block size must be even, therefore add 1.
     block_size = blur_kernel[0] + blur_kernel[1] + 1
     threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, 2)
-    return threshold
+
+    # Use laplacian to detect gradients in the image (i.e. lines)
+    # This helps to improve table region detection in later stages
+    laplacian = cv2.Laplacian(threshold, cv2.CV_64F)
+    # Convert data type from 64f to unsigned 8-bit integer
+    laplacian = np.uint8(np.absolute(laplacian))
+
+    return laplacian
 
 
 def findLargestQuadrilateralContour(contours, maxArea=None):
