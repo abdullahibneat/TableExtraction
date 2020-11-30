@@ -89,7 +89,7 @@ def processContour(approx):
 
 def main():
     # Read image
-    img = cv2.imread("sample_table.jpg")
+    img = cv2.imread("data/sample_table.jpg")
     img_copy = img.copy()
     height, width, _ = img.shape
 
