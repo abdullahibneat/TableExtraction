@@ -98,12 +98,12 @@ def findLines(img):
     erosion = cv2.erode(img, np.ones((3, 3)))
 
     horizontal_kernel = np.ones((1, width // 30))
-    horizontal = cv2.erode(erosion, horizontal_kernel)
     horizontal = cv2.dilate(erosion, horizontal_kernel)
+    horizontal = cv2.erode(horizontal, horizontal_kernel)
     
     vertical_kernel = np.ones((height // 30, 1))
-    vertical = cv2.erode(erosion, vertical_kernel)
     vertical = cv2.dilate(erosion, vertical_kernel)
+    vertical = cv2.erode(vertical, vertical_kernel)
     return cv2.bitwise_and(vertical, horizontal)
 
 
