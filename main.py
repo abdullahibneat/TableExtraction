@@ -31,7 +31,7 @@ def preProcess(img):
     # Convert data type from 64f to unsigned 8-bit integer
     laplacian = np.uint8(np.absolute(laplacian))
 
-    return laplacian
+    return (threshold, laplacian)
 
 
 def findLargestQuadrilateralContour(contours, maxArea=None):
@@ -99,10 +99,10 @@ def main():
     height, width, _ = img.shape
 
     # Process image
-    processed = preProcess(img_copy)
+    threshold, laplacian = preProcess(img_copy)
 
     # Find contours
-    contours, _ = cv2.findContours(processed, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(laplacian, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
     # Find table region
     # It is assumed the table takes up most of the image (less than 95%),
@@ -116,13 +116,14 @@ def main():
     # by mapping table points to a new image of size table_width x table_height
     target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
     matrix = cv2.getPerspectiveTransform(table_pts, target_points)
-    warped = cv2.warpPerspective(processed, matrix, (table_width, table_height))
+    # Apply warp to threshold image
+    warped = cv2.warpPerspective(threshold, matrix, (table_width, table_height))
 
     # FOR DEBUG PURPOSES ONLY
-    images = [(img, "original"), (processed, "processed")]
+    images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
 
     # Create new image with table contour displayed on top of processed image
-    table_contour_image = cv2.cvtColor(processed.copy(), cv2.COLOR_GRAY2BGR)
+    table_contour_image = cv2.cvtColor(laplacian.copy(), cv2.COLOR_GRAY2BGR)
     cv2.drawContours(table_contour_image, table_contour, -1, (0, 0, 255), 10)  # Contour
     cv2.drawContours(table_contour_image, table_contour_approx, -1, (0, 255, 0), 10)  # Approximation
     images.append((table_contour_image, "contour"))
