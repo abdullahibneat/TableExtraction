@@ -93,17 +93,27 @@ def processContour(approx):
 
 
 def findLines(img):
+    # Adapted from https://docs.opencv.org/4.4.0/dd/dd7/tutorial_morph_lines_detection.html
+
+    # Get image height and width to dynamically change
+    # horizontal and vertical kernel sizes
     height, width = img.shape
     
+    # Increase thickness of lines in the image
     erosion = cv2.erode(img, np.ones((3, 3)))
 
+    # To find horizontal lines, run a horizontal kernel (e.g. [1 1 1 1])
+    # Dilation finds lines, but shrinks their lengths, so
+    # follow with Erosion to restore original lines' size
     horizontal_kernel = np.ones((1, width // 30))
     horizontal = cv2.dilate(erosion, horizontal_kernel)
     horizontal = cv2.erode(horizontal, horizontal_kernel)
     
-    vertical_kernel = np.ones((height // 30, 1))
-    vertical = cv2.dilate(erosion, vertical_kernel)
-    vertical = cv2.erode(vertical, vertical_kernel)
+    # To find vertical lines, run a vertical kernel (e.g. [1
+    vertical_kernel = np.ones((height // 30, 1))         # 1
+    vertical = cv2.dilate(erosion, vertical_kernel)      # 1
+    vertical = cv2.erode(vertical, vertical_kernel)      # 1])
+
     return cv2.bitwise_and(vertical, horizontal)
 
 
