@@ -92,6 +92,19 @@ def processContour(approx):
     return pts, width, height
 
 
+def findLines(img):
+    height, width = img.shape
+
+    horizontal_kernel = np.ones((1, width // 30))
+    horizontal = cv2.erode(img, horizontal_kernel)
+    horizontal = cv2.dilate(img, horizontal_kernel)
+    
+    vertical_kernel = np.ones((height // 30, 1))
+    vertical = cv2.erode(img, vertical_kernel)
+    vertical = cv2.dilate(img, vertical_kernel)
+    return cv2.bitwise_and(vertical, horizontal)
+
+
 def main():
     # Read image
     img = cv2.imread("data/sample_table.jpg")
@@ -119,6 +132,9 @@ def main():
     # Apply warp to threshold image
     warped = cv2.warpPerspective(threshold, matrix, (table_width, table_height))
 
+    # Find horizontal and vertical lines
+    lines = findLines(warped)
+
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
 
@@ -128,6 +144,7 @@ def main():
     cv2.drawContours(table_contour_image, table_contour_approx, -1, (0, 255, 0), 10)  # Approximation
     images.append((table_contour_image, "contour"))
     images.append((warped, "warped"))
+    images.append((lines, "lines"))
 
     # Show images
     for image, title in images:
