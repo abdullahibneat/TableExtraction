@@ -137,12 +137,26 @@ def main():
     table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
     # Extract table region
+    # Start with a full black image
+    table_img = np.zeros(threshold.shape).astype(threshold.dtype)
+    # Create a mask for the table region
+    cv2.fillPoly(table_img, table_contour, (255, 255, 255))
+    # Apply the mask to the thresholded image, filling the region
+    # outside of the table with black
+    table_img = cv2.bitwise_and(threshold, table_img)
+
     # Use warp to extract the table region from the processed image
     # by mapping table points to a new image of size table_width x table_height
     target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
     matrix = cv2.getPerspectiveTransform(table_pts, target_points)
     # Apply warp to threshold image
-    warped = cv2.warpPerspective(threshold, matrix, (table_width, table_height))
+    warped = cv2.warpPerspective(table_img, matrix, (table_width, table_height))
+
+    # Add border around the image to preserve table border lines
+    # This will help prevent the table countour from disappearing during
+    # line extraction, subsequently allowing the algorithm to find all
+    # cells.
+    warped = cv2.copyMakeBorder(warped, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=(0, 0, 0))
 
     # Find horizontal and vertical lines
     lines = findLines(warped)
@@ -155,6 +169,7 @@ def main():
     cv2.drawContours(table_contour_image, table_contour, -1, (0, 0, 255), 10)  # Contour
     cv2.drawContours(table_contour_image, table_contour_approx, -1, (0, 255, 0), 10)  # Approximation
     images.append((table_contour_image, "contour"))
+    images.append((table_img, "table"))
     images.append((warped, "warped"))
     images.append((lines, "lines"))
 
