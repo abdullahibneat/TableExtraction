@@ -92,7 +92,7 @@ def processContour(approx):
     return pts, width, height
 
 
-def findLines(img):
+def findLinesAndIntersections(img):
     # Adapted from https://docs.opencv.org/4.4.0/dd/dd7/tutorial_morph_lines_detection.html
 
     # Get image height and width to dynamically change
@@ -114,7 +114,10 @@ def findLines(img):
     vertical = cv2.dilate(erosion, vertical_kernel)      # 1
     vertical = cv2.erode(vertical, vertical_kernel)      # 1])
 
-    return cv2.bitwise_and(vertical, horizontal)
+    lines = cv2.bitwise_and(vertical, horizontal)
+    intersections = cv2.bitwise_or(vertical, horizontal)
+
+    return lines, intersections
 
 
 def main():
@@ -159,7 +162,7 @@ def main():
     # extraction, subsequently allowing the algorithm to find all cells.
     warped = cv2.copyMakeBorder(warped, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=(0, 0, 0))
     # Find horizontal and vertical lines
-    lines = findLines(warped)
+    lines, intersections = findLinesAndIntersections(warped)
 
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
@@ -172,6 +175,7 @@ def main():
     images.append((table_img, "table"))
     images.append((warped, "warped"))
     images.append((lines, "lines"))
+    images.append((intersections, "intersections"))
 
     # Show images
     for image, title in images:
