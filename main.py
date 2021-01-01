@@ -118,25 +118,25 @@ def findLines(img):
 
 
 def main():
-    # Read image
+    # READ IMAGE
     img = cv2.imread("data/sample_table.jpg")
     img_copy = img.copy()
     height, width, _ = img.shape
 
-    # Process image
+    # PROCESS IMAGE
     threshold, laplacian = preProcess(img_copy)
 
-    # Find contours
+    # FIND CONTOUR
     contours, _ = cv2.findContours(laplacian, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Find table region
+    # FIND TABLE REGION
     # It is assumed the table takes up most of the image (less than 95%),
     # thus it can be identified by finding the largest contour with 4 sides
     maxArea = width * height * 0.95
     table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
     table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
-    # Extract table region
+    # EXTRACT TABLE REGION
     # Start with a full black image
     table_img = np.zeros(threshold.shape).astype(threshold.dtype)
     # Create a mask for the table region
@@ -145,6 +145,7 @@ def main():
     # outside of the table with black
     table_img = cv2.bitwise_and(threshold, table_img)
 
+    # WARP TABLE
     # Use warp to extract the table region from the processed image
     # by mapping table points to a new image of size table_width x table_height
     target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
@@ -152,12 +153,11 @@ def main():
     # Apply warp to threshold image
     warped = cv2.warpPerspective(table_img, matrix, (table_width, table_height))
 
+    # FIND HORIZONTAL & VERTICAL LINES
     # Add border around the image to preserve table border lines
-    # This will help prevent the table countour from disappearing during
-    # line extraction, subsequently allowing the algorithm to find all
-    # cells.
+    # This will help prevent the table countour from disappearing during line
+    # extraction, subsequently allowing the algorithm to find all cells.
     warped = cv2.copyMakeBorder(warped, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=(0, 0, 0))
-
     # Find horizontal and vertical lines
     lines = findLines(warped)
 
