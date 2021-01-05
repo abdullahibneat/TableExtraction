@@ -115,6 +115,7 @@ def findLinesAndIntersections(img):
     vertical = cv2.erode(vertical, vertical_kernel)      # 1])
 
     lines = cv2.bitwise_and(vertical, horizontal)
+    lines = cv2.erode(lines, np.ones((3, 3)), iterations=3)
 
     return lines
 
