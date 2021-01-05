@@ -196,6 +196,19 @@ def main():
     images.append((table_contour_image, "contour"))
     images.append((table_img, "table"))
     images.append((lines, "lines"))
+    # Create new image to display cell contours
+    cell_contours_image = lines.copy()
+    cell_contours_image = cv2.cvtColor(cell_contours_image, cv2.COLOR_GRAY2BGR)
+    cv2.drawContours(cell_contours_image, cell_contours, -1, (0, 0, 255), 15)
+    # Add overlay showing contour index in image
+    for i, cnt in enumerate(cell_contours):
+        # Get contour coordinates
+        # Refer to https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#moments
+        M = cv2.moments(cnt)
+        coordinates = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
+        # Put text with index contour index at above coordinates
+        cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 0, 0))
+    images.append((cell_contours_image, "cell contours"))
 
     # Show images
     for image, title in images:
