@@ -139,13 +139,13 @@ def main():
     table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
 
     # EXTRACT TABLE REGION
-    # Start with a full black image
-    table_img = np.zeros(threshold.shape).astype(threshold.dtype)
+    # Start with a full white image
+    table_img = np.full(threshold.shape, 255).astype(threshold.dtype)
     # Create a mask for the table region
-    cv2.fillPoly(table_img, table_contour, (255, 255, 255))
+    cv2.fillPoly(table_img, table_contour, (0, 0, 0))
     # Apply the mask to the thresholded image, filling the region
-    # outside of the table with black
-    table_img = cv2.bitwise_and(threshold, table_img)
+    # outside of the table with white
+    table_img = cv2.bitwise_or(threshold, table_img)
 
     # FIND HORIZONTAL & VERTICAL LINES
     # Find horizontal and vertical lines
