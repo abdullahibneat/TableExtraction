@@ -185,6 +185,7 @@ def main():
 
     # EXTRACT CELLS
     cell_contours = extractCellContours(lines)
+    print("Found " + str(len(cell_contours)) + " cells")
 
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
