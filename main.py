@@ -115,9 +115,8 @@ def findLinesAndIntersections(img):
     vertical = cv2.erode(vertical, vertical_kernel)      # 1])
 
     lines = cv2.bitwise_and(vertical, horizontal)
-    intersections = cv2.bitwise_or(vertical, horizontal)
 
-    return lines, intersections
+    return lines
 
 
 def main():
@@ -149,7 +148,7 @@ def main():
 
     # FIND HORIZONTAL & VERTICAL LINES
     # Find horizontal and vertical lines
-    lines, intersections = findLinesAndIntersections(table_img)
+    lines = findLinesAndIntersections(table_img)
 
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
@@ -161,7 +160,6 @@ def main():
     images.append((table_contour_image, "contour"))
     images.append((table_img, "table"))
     images.append((lines, "lines"))
-    images.append((intersections, "intersections"))
 
     # Show images
     for image, title in images:
