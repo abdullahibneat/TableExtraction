@@ -152,6 +152,48 @@ def extractCellContours(line_img):
     return cell_contours
 
 
+def extractRows(cell_contours):
+    # Get a subset of the cell contours (10%) and compute an average cell height
+    sample_cells = sample(cell_contours, int(len(cell_contours) * 0.1))
+    avg_height = sum([cv2.boundingRect(cnt)[3] for cnt in sample_cells]) // len(sample_cells)
+    print("Average cell height: " + str(avg_height))
+
+    rows = {}
+
+    for cnt in cell_contours:
+        # Approximate contour to a rectangle, get x, y, width and height
+        _, y, _, height = cv2.boundingRect(cnt)
+        # x, y are coordinates of the top-left point, get the center of rectangle
+        y = y + int(height / 2)
+
+        # Keep track of whether the contour has been assigned to a row
+        added = False
+
+        # Iterate over existing rows where:
+        # row = y-coordinate of the row
+        for row in rows.keys():
+            # Add this contour to the row that is within a margin of error
+            # (± avg cell height)
+            if (row - avg_height) <= y <= (row + avg_height):
+                rows[row].append(cnt)
+                added = True
+                break
+
+        # If the row wasn't added, create a new row with this cell's y-coordinate
+        # as the row
+        if not added:
+            rows[y] = [cnt]
+
+    # Sort rows top to bottom.
+    rows = dict(sorted(rows.items()))
+
+    # Sort cells left to right
+    for key, value in rows.items():
+        rows[key] = sorted(value, key=lambda cnt: cv2.boundingRect(cnt)[0])
+    
+    return rows
+
+
 def main():
     # READ IMAGE
     img = cv2.imread("data/sample_table.jpg")
