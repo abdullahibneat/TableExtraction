@@ -226,8 +226,11 @@ def main():
     lines = findLinesAndIntersections(table_img)
 
     # EXTRACT CELLS
+    # Get each cell's contour
     cell_contours = extractCellContours(lines)
     print("Found " + str(len(cell_contours)) + " cells")
+    # Group cells by row
+    rows = extractRows(cell_contours)
 
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
