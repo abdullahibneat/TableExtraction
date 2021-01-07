@@ -232,7 +232,7 @@ def main():
         # Get contour coordinates
         # Refer to https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#moments
         M = cv2.moments(cnt)
-        coordinates = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
+        coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
         # Put text with index contour index at above coordinates
         cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 0, 0))
     images.append((cell_contours_image, "cell contours"))
@@ -245,7 +245,7 @@ def main():
         cv2.drawContours(rows_img, value, -1, color, 15)
         for i, cnt in enumerate(value):
             M = cv2.moments(cnt)
-            coordinates = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
+            coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
             cv2.putText(rows_img, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 3, (0, 0, 255), 2)
     images.append((rows_img, "rows"))
 
