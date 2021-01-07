@@ -143,6 +143,8 @@ def extractRows(cell_contours):
         for row in rows.keys():
             # Add this contour to the row that is within a margin of error
             # (± avg cell height)
+            # This simple algorithm works well because of the table warping,
+            # meanining all rows should be horizontally parallel to each other.
             if (row - avg_height) <= y <= (row + avg_height):
                 rows[row].append(cnt)
                 added = True
