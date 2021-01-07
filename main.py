@@ -118,6 +118,11 @@ def findLinesAndIntersections(img):
     lines = cv2.bitwise_and(vertical, horizontal)
     lines = cv2.erode(lines, np.ones((3, 3)), iterations=3)
 
+    # Binarize the image, values less than 250 (almsot full white) are
+    # treated as black pixels, improving cell contour detection.
+    # Without this, grey lines are sometimes ignored by cv2.findContours
+    _, lines = cv2.threshold(lines, 250, 255, cv2.THRESH_BINARY)
+
     return lines
 
 
