@@ -136,12 +136,21 @@ def extractRows(cell_contours):
 
     for cnt in cell_contours:
         # Approximate contour to a rectangle, get x, y, width and height
-        _, y, _, height = cv2.boundingRect(cnt)
+        x, y, width, height = cv2.boundingRect(cnt)
 
         # Ignore contours that are too small to represent a cell
         # (e.g. small lines that appear from line recognition step)
         if height < avg_height * 0.8:
             continue
+
+        # Contour could have a strange shape, so replace original contour
+        # with the approximated bounding rectange shape
+        cnt = np.array([
+            (x, y), # Top left
+            (x + width, y), # Top right
+            (x + width, y + height), # Bottom right
+            (x, y + height) # Bottom left
+        ]).reshape((4, 2))
 
         # x, y are coordinates of the top-left point, get the center of rectangle
         y = y + int(height / 2)
