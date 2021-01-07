@@ -212,19 +212,28 @@ def main():
     # thus it can be identified by finding the largest contour with 4 sides
     maxArea = width * height * 0.95
     table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
+    table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
     # EXTRACT TABLE REGION
-    # Start with a full white image
-    table_img = np.full(threshold.shape, 255).astype(threshold.dtype)
+    # Start with a full black image
+    table_img = np.zeros(threshold.shape).astype(threshold.dtype)
     # Create a mask for the table region
-    cv2.fillPoly(table_img, table_contour, (0, 0, 0))
+    cv2.fillPoly(table_img, table_contour, (255, 255, 255))
     # Apply the mask to the thresholded image, filling the region
     # outside of the table with white
-    table_img = cv2.bitwise_or(threshold, table_img)
+    table_img = cv2.bitwise_and(threshold, table_img)
+
+    # WARP TABLE
+    # Use warp to extract the table region from the processed image
+    # by mapping table points to a new image of size table_width x table_height
+    target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
+    matrix = cv2.getPerspectiveTransform(table_pts, target_points)
+    # Apply warp to threshold image
+    warped = cv2.warpPerspective(table_img, matrix, (table_width, table_height))
 
     # FIND HORIZONTAL & VERTICAL LINES
     # Find horizontal and vertical lines
-    lines = findLinesAndIntersections(table_img)
+    lines = findLinesAndIntersections(warped)
 
     # EXTRACT CELLS
     # Get each cell's contour
@@ -242,6 +251,7 @@ def main():
     cv2.drawContours(table_contour_image, table_contour_approx, -1, (0, 255, 0), 10)  # Approximation
     images.append((table_contour_image, "contour"))
     images.append((table_img, "table"))
+    images.append((warped, "warped"))
     images.append((lines, "lines"))
     # Create new image to display cell contours
     cell_contours_image = lines.copy()
@@ -257,7 +267,7 @@ def main():
         cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 0, 0))
     images.append((cell_contours_image, "cell contours"))
     # Create new image to display detected rows
-    rows_img = table_img.copy()
+    rows_img = warped.copy()
     rows_img = cv2.cvtColor(rows_img, cv2.COLOR_GRAY2BGR)
     # Colour-coordinate cells based on row and display cell contour index
     for _, value in rows.items():
