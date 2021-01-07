@@ -1,6 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+from random import randint, sample
 
 
 def preProcess(img):
@@ -255,6 +256,18 @@ def main():
         # Put text with index contour index at above coordinates
         cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 0, 0))
     images.append((cell_contours_image, "cell contours"))
+    # Create new image to display detected rows
+    rows_img = table_img.copy()
+    rows_img = cv2.cvtColor(rows_img, cv2.COLOR_GRAY2BGR)
+    # Colour-coordinate cells based on row and display cell contour index
+    for _, value in rows.items():
+        color = (randint(0, 255), randint(0, 255), randint(0, 255))
+        cv2.drawContours(rows_img, value, -1, color, 15)
+        for i, cnt in enumerate(value):
+            M = cv2.moments(cnt)
+            coordinates = (int(M['m10']/M['m00']), int(M['m01']/M['m00']))
+            cv2.putText(rows_img, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 3, (0, 0, 255), 2)
+    images.append((rows_img, "rows"))
 
     # Show images
     for image, title in images:
