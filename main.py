@@ -121,38 +121,6 @@ def findLinesAndIntersections(img):
     return lines
 
 
-def extractCellContours(line_img):
-    # Find all contours
-    contours, _ = cv2.findContours(line_img, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-    cell_contours = []
-
-    # Set max area to avoid the image border being included
-    # as a contour
-    height, width = line_img.shape
-    maxArea = height * width * 0.99
-
-    # Keep track of the largest contour (i.e. table contour)
-    biggest_area = 0
-    table_contour_index = 0
-    
-    # Filter contours, removing anything with area
-    # greater than maxArea
-    cell_contours_index = 0
-    for cnt in contours:
-        area = cv2.contourArea(cnt)
-        if(area < maxArea):
-            cell_contours.append(cnt)
-            if(area > biggest_area):
-                table_contour_index = cell_contours_index
-            cell_contours_index += 1
-
-
-    # Remove the table contour
-    del cell_contours[table_contour_index]
-    
-    return cell_contours
-
-
 def extractRows(cell_contours):
     # Get a subset of the cell contours (10%) and compute an average cell height
     sample_cells = sample(cell_contours, int(len(cell_contours) * 0.1))
@@ -237,7 +205,7 @@ def main():
 
     # EXTRACT CELLS
     # Get each cell's contour
-    cell_contours = extractCellContours(lines)
+    cell_contours, _ = cv2.findContours(lines, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
     print("Found " + str(len(cell_contours)) + " cells")
     # Group cells by row
     rows = extractRows(cell_contours)
