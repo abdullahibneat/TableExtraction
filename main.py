@@ -35,18 +35,13 @@ def preProcess(img):
     return (threshold, laplacian)
 
 
-def findLargestQuadrilateralContour(contours, maxArea=None):
-    maxAreaSet = maxArea is not None
+def findLargestQuadrilateralContour(contours):
     biggest_area = 0
     biggest_contour = None
     biggest_contour_approx = None
     for contour in contours:
         # Get the area of this contour
         area = cv2.contourArea(contour)
-
-        # Reassign maxArea if it was originally None
-        if not maxAreaSet:
-            maxArea = area
 
         # Get the length of the perimeter
         perimeter = cv2.arcLength(contour, True)
@@ -56,9 +51,9 @@ def findLargestQuadrilateralContour(contours, maxArea=None):
         # edges are curved and not perfectly straight
         approx = cv2.approxPolyDP(contour, 0.01 * perimeter, True)
 
-        # Check if area is bigger than previous contour but smaller than or equal to maxArea
+        # Check if area is bigger than previous contour
         # and if the approximation contains only 4 sides (i.e. quadrilateral)
-        if biggest_area < area <= maxArea and len(approx) == 4:
+        if area > biggest_area and len(approx) == 4:
             biggest_area = area
             biggest_contour = contour
             biggest_contour_approx = approx
@@ -198,10 +193,9 @@ def main():
     contours, _ = cv2.findContours(laplacian, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
     # FIND TABLE REGION
-    # It is assumed the table takes up most of the image (less than 95%),
+    # It is assumed the table takes up most of the image,
     # thus it can be identified by finding the largest contour with 4 sides
-    maxArea = width * height * 0.95
-    table_contour, table_contour_approx = findLargestQuadrilateralContour(contours, maxArea)
+    table_contour, table_contour_approx = findLargestQuadrilateralContour(contours)
     table_pts, table_width, table_height = processContour(table_contour_approx[0])
 
     # EXTRACT TABLE REGION
