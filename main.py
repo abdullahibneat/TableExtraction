@@ -184,7 +184,6 @@ def main():
     # READ IMAGE
     img = cv2.imread("data/sample_table.jpg")
     img_copy = img.copy()
-    height, width, _ = img.shape
 
     # PROCESS IMAGE
     threshold, laplacian = preProcess(img_copy)
