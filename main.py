@@ -180,6 +180,95 @@ def extractRows(cell_contours):
     return rows
 
 
+def reconstructTable(rows):
+    # Reconstruct the table following a top-to-bottom approach. Iterate over each row
+    # and check for the number of cells. If there are more cells than the previous row,
+    # this will indicate columns have been split, and the new row is treated as a new 
+    # heading in the table.
+    # Otherwise, if the same number of cells appear, this means the row contains new
+    # values for the previous column, so add the cell content to the existing column.
+
+    # EXAMPLE TABLE:
+    # +-------+-------+
+    # |   A   |   B   |
+    # +---+---+---+---+
+    # | C | D | E | F |
+    # +---+---+---+---+
+    # | 1 | 2 | 3 | 4 |
+    # +---+---+---+---+
+
+    # Store table as a disctionary, where:
+    #   key = column name
+    #   value = list of cell values
+    # In the example above, table will look like the following: 
+    #
+    # table = {
+    #   A: {
+    #       C: [1],
+    #       D: [2],
+    #   },
+    #   B: {
+    #       E: [3],
+    #       F: [4]
+    #   }
+    # }
+    table = {}
+
+    # Columns is a reference to the values of the heading names.
+    # For example, in the above example:
+    # after the first iteration:    columns = [[], []]
+    # after the second iteration:   columns = [[], [], [], []]
+    # after the third iteration:    columns = [[1], [2], [3], [4]]
+    columns = None
+
+    # Use conunter to replace cell text with a number
+    # Will need to replace this with OCR
+    text = 0
+
+    for cells in rows.values():
+        # Extract cell text (will be replaced with OCR)
+        cell_contents = []
+        for cell in cells:
+            cell_contents.append(text)
+            text += 1
+        
+        if columns is None:
+            # FIRST ITERATION
+            # Add first row to the table
+            for cell in cell_contents:
+                table[cell] = []
+            columns = list(table.values())
+
+        elif len(cell_contents) > len(columns):
+            # DIFFERENT NUMBER OF CELLS
+            # Columns have been split, add this row as new headings
+
+            # Keep track of the previous headings
+            previous_headings = columns
+
+            # Set new headings to current heading contents
+            columns = [[] for _ in cell_contents]
+
+            # Map each cell content to a new dictionary representing the new headings and
+            # group them based on the previous number of columns.
+            # For instance, in the example above they are split in groups of 2:
+            #   - [C, D] are children of A
+            #   - [E, F] are children of B
+            cell_contents = np.split(
+                np.array([{ heading: columns[i] } for i, heading in enumerate(cell_contents)]),
+                len(previous_headings)
+            )
+            for i, column in enumerate(previous_headings):
+                column.extend(cell_contents[i])
+
+        elif len(cell_contents) == len(columns):
+            # SAME NUMBER OF CELLS
+            # add all cells one by one to each column
+            for i in range(len(cells)):
+                columns[i].append(cell_contents[i])
+    return table
+
+
 def main():
     # READ IMAGE
     img = cv2.imread("data/sample_table.jpg")
