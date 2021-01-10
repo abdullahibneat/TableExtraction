@@ -313,6 +313,9 @@ def main():
     # Group cells by row
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
+    # Reconstruct table structure
+    table = reconstructTable(rows)
+    print(table)
 
     # FOR DEBUG PURPOSES ONLY
     images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
