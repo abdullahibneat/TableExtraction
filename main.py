@@ -180,7 +180,7 @@ def extractRows(cell_contours):
     return rows
 
 
-def reconstructTable(rows):
+def reconstructTable(rows, warped):
     # Reconstruct the table following a top-to-bottom approach. Iterate over each row
     # and check for the number of cells. If there are more cells than the previous row,
     # this will indicate columns have been split, and the new row is treated as a new 
@@ -314,7 +314,7 @@ def main():
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
     # Reconstruct table structure
-    table = reconstructTable(rows)
+    table = reconstructTable(rows, warped)
     print(table)
 
     # FOR DEBUG PURPOSES ONLY
