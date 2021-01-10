@@ -2,6 +2,7 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 from random import randint, sample
+from pytesseract import image_to_string
 
 
 def preProcess(img):
@@ -221,16 +222,16 @@ def reconstructTable(rows, warped):
     # after the third iteration:    columns = [[1], [2], [3], [4]]
     columns = None
 
-    # Use conunter to replace cell text with a number
-    # Will need to replace this with OCR
-    text = 0
-
     for cells in rows.values():
         # Extract cell text (will be replaced with OCR)
         cell_contents = []
-        for cell in cells:
-            cell_contents.append(text)
-            text += 1
+        for cnt in cells:
+            # Extract cell region from image
+            x1, y1 = cnt[0]
+            x2, y2 = cnt[2]
+            cell = warped[y1:y2, x1:x2]
+            # Parse image in Tesseract
+            cell_contents.append(image_to_string(cell).strip())
         
         if columns is None:
             # FIRST ITERATION
