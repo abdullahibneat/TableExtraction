@@ -184,19 +184,19 @@ def extractRows(cell_contours):
 # This funciton is used to recursively find the leaf entries in a dictionary, and replace
 # the last list values with dictionaries. This is done beacuse a new table heading should
 # be represented by a dictionary type, whereas column values are stored in a list.
-def leafListToDict(dict):
+def leafListToDict(column):
     # If the values are all empty lists...
     # any(list) returns True if list contains non-empty lists
     # E.g. any([[1], [2], [3]]) = True, any([[], [], []]) = False
-    if not any(dict.values()):
+    if not any(column.values()):
         # ...replace them with dictionaries
-        for key in dict:
-            dict[key] = {}
-        return dict.values()
+        for key in column:
+            column[key] = {}
+        return column.values()
     # Otherwise recursively iterate all the dictionaries until the leaf key-value pair is
     # reached. Double for-loop is used to flatten the return array
     # E.g. [[a], [b], [c]] => [a, b, c]
-    return [column for child in dict.values() for column in leafListToDict(child)]
+    return [column for child in column.values() for column in leafListToDict(child)]
 
 
 def reconstructTable(rows, warped):
