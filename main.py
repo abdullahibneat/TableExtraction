@@ -185,6 +185,32 @@ def extractRows(cell_contours):
 # the last list values with dictionaries. This is done beacuse a new table heading should
 # be represented by a dictionary type, whereas column values are stored in a list.
 def leafListToDict(column):
+    # If the column is a list...
+    # This could happen if a heading has multiple values followed by a column split
+    # E.g.
+    #       +-----------------+------------------+-------------------+
+    #       |        A        |        B         |         C         |
+    #       +-----------------+------------------+-------------------+
+    #       |     value1      |     value2       |      value3       |
+    #       +-----------------+------------------+-------------------+
+    #       |     value4      |     value5       |      value6       |
+    #       +--------+--------+--------+---------+---------+---------+
+    #       |   D    |   E    |   F    |    G    |    H    |    I    |
+    #       +--------+--------+--------+---------+---------+---------+
+    #       | value7 | value8 | value9 | value10 | value11 | value12 |
+    #       +--------+--------+--------+---------+---------+---------+
+    # Column A has 2 values (value1, value4) followed by a column split (D, E)
+    if type(column) is list:
+        # If the last item in the list is a dictionary, iterate over that dictionary to
+        # find the leaf list
+        if type(column[-1]) is dict:
+            return leafListToDict(column[-1])
+        
+        # Otherwise create a new dictiorary and return it
+        new_value = {}
+        column.append(new_value)
+        return [new_value]
+
     # If the values are all empty lists...
     # any(list) returns True if list contains non-empty lists
     # E.g. any([[1], [2], [3]]) = True, any([[], [], []]) = False
