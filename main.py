@@ -308,10 +308,10 @@ def reconstructTable(rows, warped):
             columns = leafListToDict(table)
 
             # Keep track of the previous headings
-            previous_headings = columns
+            previous_headings = list(columns)
 
-            # Reset the columns
-            columns = []
+            # Create new columns for each of the new headings
+            columns = [[] for _ in cell_contents]
 
             # Split the new headings into lists of equal size.
             # For instance, in the example table above they are split in groups of 2:
@@ -319,29 +319,21 @@ def reconstructTable(rows, warped):
             #   - [E, F] are children of B
             # This is done by comparing the current column size (+1%) to the cell sizes.
             # When the column size is exceeded, this will indicate a new column has started.
-            headings = [[]]
             current_column_index = 0 # Keep track of current column
             current_width = 0 # Aggregate all cell sizes to check against column size
 
             for i, heading in enumerate(cell_contents):
                 current_width += cell_sizes[i] # Add current cell width to current column
 
-                # If cell fits the current column, add it to the current column
-                if current_width < columns_sizes[current_column_index] * 1.01:
-                    headings[-1].append(heading)
-                # Otherwise create a new list and move to the next column
-                else:
-                    headings.append([heading])
-                    current_width = cell_sizes[i]
+                # If cell doesn't fit in the current column, move to the next one
+                if current_width > columns_sizes[current_column_index] * 1.01:
                     current_column_index += 1
+                    current_width = cell_sizes[i]
 
-            # Add the new headings as a key to the previous headings, and assign a list
-            # as the value.
-            for i, column in enumerate(previous_headings):
-                for heading in headings[i]:
-                    new_column = []
-                    column[heading] = new_column
-                    columns.append(new_column)
+                # Add this new heading as child of previous heading
+                previous_headings[current_column_index][heading] = columns[i]
+
+            # Reset columns sizes
             columns_sizes = cell_sizes
 
         elif len(cell_contents) == len(columns):
