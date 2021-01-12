@@ -262,23 +262,31 @@ def reconstructTable(rows, warped):
             # DIFFERENT NUMBER OF CELLS
             # Columns have been split, add this row as new headings
 
+            # Replace the previous columns to be new dictionaries.
+            # At this line, columns contains the lists of the last headings. Because new
+            # headings have been found, the last headings are converted from lists to
+            # dictionaries.
+            columns = leafListToDict(table)
+
             # Keep track of the previous headings
             previous_headings = columns
 
-            # Set new headings to current heading contents
-            columns = [[] for _ in cell_contents]
+            # Reset the columns
+            columns = []
 
-            # Map each cell content to a new dictionary representing the new headings and
-            # group them based on the previous number of columns.
-            # For instance, in the example above they are split in groups of 2:
+            # Split the new headings into lists of equal size.
+            # For instance, in the example table above they are split in groups of 2:
             #   - [C, D] are children of A
             #   - [E, F] are children of B
-            cell_contents = np.split(
-                np.array([{ heading: columns[i] } for i, heading in enumerate(cell_contents)]),
-                len(previous_headings)
-            )
+            cell_contents = np.split(np.array(cell_contents), len(previous_headings))
+
+            # Add the new headings as a key to the previous headings, and assign a list
+            # as the value.
             for i, column in enumerate(previous_headings):
-                column.extend(cell_contents[i])
+                for heading in cell_contents[i]:
+                    new_column = []
+                    column[heading] = new_column
+                    columns.append(new_column)
 
         elif len(cell_contents) == len(columns):
             # SAME NUMBER OF CELLS
