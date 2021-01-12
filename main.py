@@ -267,6 +267,10 @@ def reconstructTable(rows, warped):
     columns = None
     columns_sizes = [] # Keep track of column sizes
 
+    # Sometimes Tessearct returns an empty string when parsing a cell. Keep track
+    # of cell number to replace empty strings.
+    cell_number = 0
+
     for cells in rows.values():
         cell_sizes = [] # Keep track of cell sizes
 
@@ -279,7 +283,11 @@ def reconstructTable(rows, warped):
             cell_sizes.append(x2 - x1) # Add cell width to the list of cell sizes
             cell = warped[y1:y2, x1:x2]
             # Parse image in Tesseract
-            cell_contents.append(image_to_string(cell).strip())
+            text = image_to_string(cell).strip()
+            if text == "":
+                text = "(failed) cell #" + str(cell_number)
+            cell_contents.append(text)
+            cell_number += 1
         
         if columns is None:
             # FIRST ITERATION
