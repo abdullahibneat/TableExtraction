@@ -342,6 +342,7 @@ def reconstructTable(rows, warped):
                     new_column = []
                     column[heading] = new_column
                     columns.append(new_column)
+            columns_sizes = cell_sizes
 
         elif len(cell_contents) == len(columns):
             # SAME NUMBER OF CELLS
