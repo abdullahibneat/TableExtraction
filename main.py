@@ -2,7 +2,8 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 from random import randint, sample
-from pytesseract import image_to_string
+from tesserocr import PyTessBaseAPI
+from PIL import Image
 
 
 def preProcess(img):
@@ -271,76 +272,80 @@ def reconstructTable(rows, warped):
     # of cell number to replace empty strings.
     cell_number = 0
 
-    for cells in rows.values():
-        cell_sizes = [] # Keep track of cell sizes
+    with PyTessBaseAPI() as api:
+        for cells in rows.values():
+            cell_sizes = [] # Keep track of cell sizes
 
-        # Extract cell text (will be replaced with OCR)
-        cell_contents = []
-        for cnt in cells:
-            # Extract cell region from image
-            x1, y1 = cnt[0]
-            x2, y2 = cnt[2]
-            cell_sizes.append(x2 - x1) # Add cell width to the list of cell sizes
-            cell = warped[y1:y2, x1:x2]
-            # Parse image in Tesseract
-            text = image_to_string(cell).strip()
-            if text == "":
-                text = "(failed) cell #" + str(cell_number)
-            cell_contents.append(text)
-            cell_number += 1
-        
-        if columns is None:
-            # FIRST ITERATION
-            # Add first row to the table
-            for cell in cell_contents:
-                table[cell] = []
-            columns = list(table.values())
-            columns_sizes = cell_sizes
+            # Extract cell text (will be replaced with OCR)
+            cell_contents = []
+            for cnt in cells:
+                # Extract cell region from image
+                x1, y1 = cnt[0]
+                x2, y2 = cnt[2]
+                cell_sizes.append(x2 - x1) # Add cell width to the list of cell sizes
+                cell = warped[y1:y2, x1:x2]
+                # Convert from cv2 to PIL
+                cell = Image.fromarray(cell)
+                # Parse image in Tesseract
+                api.SetImage(cell)
+                text = api.GetUTF8Text().strip()
+                if text == "":
+                    text = "(failed) cell #" + str(cell_number)
+                cell_contents.append(text)
+                cell_number += 1
+            
+            if columns is None:
+                # FIRST ITERATION
+                # Add first row to the table
+                for cell in cell_contents:
+                    table[cell] = []
+                columns = list(table.values())
+                columns_sizes = cell_sizes
 
-        elif len(cell_contents) > len(columns):
-            # DIFFERENT NUMBER OF CELLS
-            # Columns have been split, add this row as new headings
+            elif len(cell_contents) > len(columns):
+                # DIFFERENT NUMBER OF CELLS
+                # Columns have been split, add this row as new headings
 
-            # Replace the previous columns to be new dictionaries.
-            # At this line, columns contains the lists of the last headings. Because new
-            # headings have been found, the last headings are converted from lists to
-            # dictionaries.
-            columns = leafListToDict(table)
+                # Replace the previous columns to be new dictionaries.
+                # At this line, columns contains the lists of the last headings. Because new
+                # headings have been found, the last headings are converted from lists to
+                # dictionaries.
+                columns = leafListToDict(table)
 
-            # Keep track of the previous headings
-            previous_headings = list(columns)
+                # Keep track of the previous headings
+                previous_headings = list(columns)
 
-            # Create new columns for each of the new headings
-            columns = [[] for _ in cell_contents]
+                # Create new columns for each of the new headings
+                columns = [[] for _ in cell_contents]
 
-            # Split the new headings into lists of equal size.
-            # For instance, in the example table above they are split in groups of 2:
-            #   - [C, D] are children of A
-            #   - [E, F] are children of B
-            # This is done by comparing the current column size (+1%) to the cell sizes.
-            # When the column size is exceeded, this will indicate a new column has started.
-            current_column_index = 0 # Keep track of current column
-            current_width = 0 # Aggregate all cell sizes to check against column size
+                # Split the new headings into lists of equal size.
+                # For instance, in the example table above they are split in groups of 2:
+                #   - [C, D] are children of A
+                #   - [E, F] are children of B
+                # This is done by comparing the current column size (+1%) to the cell sizes.
+                # When the column size is exceeded, this will indicate a new column has started.
+                current_column_index = 0 # Keep track of current column
+                current_width = 0 # Aggregate all cell sizes to check against column size
 
-            for i, heading in enumerate(cell_contents):
-                current_width += cell_sizes[i] # Add current cell width to current column
+                for i, heading in enumerate(cell_contents):
+                    current_width += cell_sizes[i] # Add current cell width to current column
 
-                # If cell doesn't fit in the current column, move to the next one
-                if current_width > columns_sizes[current_column_index] * 1.01:
-                    current_column_index += 1
-                    current_width = cell_sizes[i]
+                    # If cell doesn't fit in the current column, move to the next one
+                    if current_width > columns_sizes[current_column_index] * 1.01:
+                        current_column_index += 1
+                        current_width = cell_sizes[i]
 
-                # Add this new heading as child of previous heading
-                previous_headings[current_column_index][heading] = columns[i]
+                    # Add this new heading as child of previous heading
+                    previous_headings[current_column_index][heading] = columns[i]
 
-            # Reset columns sizes
-            columns_sizes = cell_sizes
+                # Reset columns sizes
+                columns_sizes = cell_sizes
 
-        elif len(cell_contents) == len(columns):
-            # SAME NUMBER OF CELLS
-            # add all cells one by one to each column
-            for i in range(len(cells)):
-                columns[i].append(cell_contents[i])
+            elif len(cell_contents) == len(columns):
+                # SAME NUMBER OF CELLS
+                # add all cells one by one to each column
+                for i in range(len(cells)):
+                    columns[i].append(cell_contents[i])
     return table
 
 
