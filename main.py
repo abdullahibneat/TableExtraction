@@ -34,7 +34,12 @@ def preProcess(img):
     # Convert data type from 64f to unsigned 8-bit integer
     laplacian = np.uint8(np.absolute(laplacian))
 
-    return (threshold, laplacian)
+    # Use a morphological closing operation to remove as much noise
+    # as possible
+    kernel = np.ones((3, 3))
+    close = cv2.morphologyEx(threshold, cv2.MORPH_CLOSE, kernel)
+
+    return (close, laplacian)
 
 
 def findLargestQuadrilateralContour(contours):
