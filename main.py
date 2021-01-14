@@ -392,6 +392,23 @@ def main():
     # Find horizontal and vertical lines
     lines = findLinesAndIntersections(warped)
 
+    # CREATE TABLE IMAGE WITHOUT LINES
+    # This will help the OCR engine perform better.
+    # Invert the lines image (cv2.bitwise_not(lines)) and use the OR operation
+    # to remove all the lines.
+    text_only = cv2.bitwise_or(warped, cv2.bitwise_not(lines))
+
+    # Find small contours in the image (i.e. noise), and fill them with white
+    contours, _ = cv2.findContours(text_only, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area < 25:
+            cv2.drawContours(text_only, [cnt], -1, (255,255,255), -1)
+
+    # Apply a blur to improve Tesseract's accuracy
+    text_only = cv2.medianBlur(text_only, 3)
+
     # EXTRACT CELLS
     # Get each cell's contour
     cell_contours, _ = cv2.findContours(lines, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
@@ -399,7 +416,7 @@ def main():
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
     # Reconstruct table structure
-    table = reconstructTable(rows, warped)
+    table = reconstructTable(rows, text_only)
     print(table)
 
     # FOR DEBUG PURPOSES ONLY
