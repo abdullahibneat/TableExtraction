@@ -13,7 +13,7 @@ def preProcess(img):
     # Blur image to remove noise
     # Determine kernel size by using image height and width
     height, width, _ = img.shape
-    kernel_size = min(int(height * 0.0025), int(width * 0.0025))
+    kernel_size = max(int(height * 0.005), int(width * 0.005))
     # Kernel must have odd values because of GaussianBlur
     if kernel_size % 2 == 0:
         kernel_size += 1
