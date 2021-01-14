@@ -2,7 +2,7 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 from random import randint, sample
-from tesserocr import PyTessBaseAPI
+from tesserocr import PyTessBaseAPI, PSM, OEM
 from PIL import Image
 
 
@@ -277,7 +277,7 @@ def reconstructTable(rows, warped):
     # of cell number to replace empty strings.
     cell_number = 0
 
-    with PyTessBaseAPI() as api:
+    with PyTessBaseAPI(lang="eng", psm=PSM.SINGLE_BLOCK, oem=OEM.LSTM_ONLY) as api:
         for cells in rows.values():
             cell_sizes = [] # Keep track of cell sizes
 
