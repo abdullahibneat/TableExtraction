@@ -7,19 +7,16 @@ from PIL import Image
 
 
 def preProcess(img):
-    # Convert to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
     # Blur image to remove noise
     # Determine kernel size by using image height and width
-    height, width, _ = img.shape
+    height, width = img.shape
     kernel_size = max(int(height * 0.005), int(width * 0.005))
     # Kernel must have odd values because of GaussianBlur
     if kernel_size % 2 == 0:
         kernel_size += 1
     kernel = (kernel_size, kernel_size)
     print("kernel: " + str(kernel))
-    blur = cv2.GaussianBlur(gray, kernel, 1)
+    blur = cv2.GaussianBlur(img, kernel, 1)
 
     # Use adaptive thresholding to have only black and white pixels
     # Without adaptive shadows might black out regions in the image
@@ -356,7 +353,7 @@ def reconstructTable(rows, warped):
 
 def main():
     # READ IMAGE
-    img = cv2.imread("data/sample_table.jpg")
+    img = cv2.imread("data/sample_table.jpg", 0)
     img_copy = img.copy()
 
     # PROCESS IMAGE
