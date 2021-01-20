@@ -35,27 +35,28 @@ def preProcess(img):
 
 
 def findLargestQuadrilateralContour(contours):
-    biggest_area = 0
+    # Sort contours from smallest area to biggest
+    sorted_contours = sorted(contours, key=cv2.contourArea, reverse=True)
+
     biggest_contour = None
     biggest_contour_approx = None
-    for contour in contours:
-        # Get the area of this contour
-        area = cv2.contourArea(contour)
 
+    for cnt in sorted_contours:
         # Get the length of the perimeter
-        perimeter = cv2.arcLength(contour, True)
+        perimeter = cv2.arcLength(cnt, True)
 
         # Approximate a shape that resembles the contour
         # This is needed because the image might be warped, thus
         # edges are curved and not perfectly straight
-        approx = cv2.approxPolyDP(contour, 0.01 * perimeter, True)
+        approx = cv2.approxPolyDP(cnt, 0.01 * perimeter, True)
 
-        # Check if area is bigger than previous contour
-        # and if the approximation contains only 4 sides (i.e. quadrilateral)
-        if area > biggest_area and len(approx) == 4:
-            biggest_area = area
-            biggest_contour = contour
+        # Check if the approximation contains only 4 sides
+        # (i.e. quadrilateral)
+        if len(approx) == 4:
+            biggest_contour = cnt
             biggest_contour_approx = approx
+            break
+
     return [biggest_contour], [biggest_contour_approx]
 
 
