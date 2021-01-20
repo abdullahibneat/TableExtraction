@@ -98,13 +98,11 @@ def findLinesAndIntersections(img):
     # Dilation finds lines, but shrinks their lengths, so
     # follow with Erosion to restore original lines' size
     horizontal_kernel = np.ones((1, width // 100))
-    horizontal = cv2.dilate(img, horizontal_kernel)
-    horizontal = cv2.erode(horizontal, horizontal_kernel)
+    horizontal = cv2.morphologyEx(img, cv2.MORPH_CLOSE, horizontal_kernel)
     
-    # To find vertical lines, run a vertical kernel (e.g. [1
-    vertical_kernel = np.ones((height // 100, 1))       #  1
-    vertical = cv2.dilate(img, vertical_kernel)         #  1
-    vertical = cv2.erode(vertical, vertical_kernel)     #  1])
+    # To find vertical lines, run a vertical kernel
+    vertical_kernel = np.ones((height // 100, 1))
+    vertical = cv2.morphologyEx(img, cv2.MORPH_CLOSE, vertical_kernel)
 
     lines = cv2.bitwise_and(vertical, horizontal)
     lines = cv2.erode(lines, np.ones((3, 3)), iterations=3)
