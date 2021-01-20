@@ -453,7 +453,7 @@ def main():
     # Create new image to display cell contours
     cell_contours_image = lines.copy()
     cell_contours_image = cv2.cvtColor(cell_contours_image, cv2.COLOR_GRAY2BGR)
-    cv2.drawContours(cell_contours_image, cell_contours, -1, (0, 0, 255), 15)
+    cv2.drawContours(cell_contours_image, cell_contours, -1, (0, 0, 255), 2)
     # Add overlay showing contour index in image
     for i, cnt in enumerate(cell_contours):
         # Get contour coordinates
@@ -461,7 +461,7 @@ def main():
         M = cv2.moments(cnt)
         coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
         # Put text with index contour index at above coordinates
-        cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1.5, (255, 0, 0))
+        cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 0, 0), 2)
     images.append((cell_contours_image, "cell contours"))
     # Create new image to display detected rows
     rows_img = warped.copy()
@@ -469,11 +469,11 @@ def main():
     # Colour-coordinate cells based on row and display cell contour index
     for _, value in rows.items():
         color = (randint(0, 255), randint(0, 255), randint(0, 255))
-        cv2.drawContours(rows_img, value, -1, color, 15)
+        cv2.drawContours(rows_img, value, -1, color, 2)
         for i, cnt in enumerate(value):
             M = cv2.moments(cnt)
             coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
-            cv2.putText(rows_img, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 3, (0, 0, 255), 2)
+            cv2.putText(rows_img, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255), 2)
     images.append((rows_img, "rows"))
 
     # Show images
