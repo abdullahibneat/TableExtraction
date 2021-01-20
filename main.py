@@ -93,20 +93,17 @@ def findLinesAndIntersections(img):
     # Get image height and width to dynamically change
     # horizontal and vertical kernel sizes
     height, width = img.shape
-    
-    # Increase thickness of lines in the image
-    erosion = cv2.erode(img, np.ones((3, 3)))
 
     # To find horizontal lines, run a horizontal kernel (e.g. [1 1 1 1])
     # Dilation finds lines, but shrinks their lengths, so
     # follow with Erosion to restore original lines' size
     horizontal_kernel = np.ones((1, min(100, width // 2)))
-    horizontal = cv2.dilate(erosion, horizontal_kernel)
+    horizontal = cv2.dilate(img, horizontal_kernel)
     horizontal = cv2.erode(horizontal, horizontal_kernel)
     
     # To find vertical lines, run a vertical kernel (e.g. [1
     vertical_kernel = np.ones((min(100, height // 2), 1))# 1
-    vertical = cv2.dilate(erosion, vertical_kernel)      # 1
+    vertical = cv2.dilate(img, vertical_kernel)      # 1
     vertical = cv2.erode(vertical, vertical_kernel)      # 1])
 
     lines = cv2.bitwise_and(vertical, horizontal)
