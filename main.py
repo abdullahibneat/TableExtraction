@@ -25,7 +25,7 @@ def preProcess(img):
     # Without adaptive shadows might black out regions in the image
     # Gaussian produces less noise compared to ADAPTIVE_THRESH_MEAN_C
     # Block size: above, both kernel values are odd, but block size must be even, therefore add 1.
-    block_size = kernel_size * 2 + 1
+    block_size = kernel_size * 2 - 1
     threshold = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, block_size, 2)
 
     # Use laplacian to detect gradients in the image (i.e. lines)
