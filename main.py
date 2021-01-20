@@ -431,7 +431,7 @@ def main():
 
     # EXTRACT CELLS
     # Get each cell's contour
-    cell_contours, _ = cv2.findContours(lines, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # Group cells by row
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
