@@ -377,8 +377,13 @@ def main():
     # by mapping table points to a new image of size table_width x table_height
     target_points = np.float32([[0, 0], [table_width, 0], [table_width, table_height], [0, table_height]])
     matrix = cv2.getPerspectiveTransform(table_pts, target_points)
-    # Apply warp to threshold image
+    # Apply warp to the image to extract the tbale region
     warped = cv2.warpPerspective(table_img, matrix, (table_width, table_height))
+    # Resize warped to have width 750px
+    scale_factor = 750 / table_width
+    warped = cv2.resize(warped, (0, 0), fx=scale_factor, fy=scale_factor)
+    # Apply threshold
+    warped = cv2.adaptiveThreshold(warped, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 9, 2)
 
     # FIND HORIZONTAL & VERTICAL LINES
     # Find horizontal and vertical lines
