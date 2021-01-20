@@ -388,12 +388,12 @@ def main():
 
     # EXTRACT TABLE REGION
     # Start with a full black image
-    table_img = np.zeros(img.shape).astype(img.dtype)
+    mask = np.zeros(img.shape).astype(img.dtype)
     # Create a mask for the table region
-    cv2.fillPoly(table_img, table_contour, (255, 255, 255))
+    cv2.fillPoly(mask, table_contour, (255, 255, 255))
     # Apply the mask to the thresholded image, filling the region
     # outside of the table with white
-    table_img = cv2.bitwise_and(img, table_img)
+    table_img = cv2.bitwise_and(img, mask)
 
     # WARP TABLE
     # Use warp to extract the table region from the processed image
@@ -402,15 +402,21 @@ def main():
     matrix = cv2.getPerspectiveTransform(table_pts, target_points)
     # Apply warp to the image to extract the tbale region
     warped = cv2.warpPerspective(table_img, matrix, (table_width, table_height))
-    # Resize warped to have width 750px
+    # Apply warp to mask
+    warped_mask = cv2.warpPerspective(mask, matrix, (table_width, table_height))
+    # Resize warped and mask to have width 750px
     scale_factor = 750 / table_width
     warped = cv2.resize(warped, (0, 0), fx=scale_factor, fy=scale_factor)
+    warped_mask = cv2.resize(warped_mask, (0, 0), fx=scale_factor, fy=scale_factor)
     # Apply threshold
     warped = cv2.adaptiveThreshold(warped, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 9, 2)
 
     # FIND HORIZONTAL & VERTICAL LINES
     # Find horizontal and vertical lines
     lines = findLinesAndIntersections(warped)
+    # Since the funciton above might get rid of the black area outside the table
+    # region, apply mask again
+    lines = cv2.bitwise_and(lines, warped_mask)
 
     # CREATE TABLE IMAGE WITHOUT LINES
     # This will help the OCR engine perform better.
