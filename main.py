@@ -31,7 +31,7 @@ def preProcess(img):
     # Convert data type from 64f to unsigned 8-bit integer
     laplacian = np.uint8(np.absolute(laplacian))
 
-    return (threshold, laplacian)
+    return laplacian
 
 
 def findLargestQuadrilateralContour(contours):
@@ -352,7 +352,7 @@ def main():
     img_copy = img.copy()
 
     # PROCESS IMAGE
-    threshold, laplacian = preProcess(img_copy)
+    laplacian = preProcess(img_copy)
 
     # FIND CONTOUR
     contours, _ = cv2.findContours(laplacian, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
@@ -365,12 +365,12 @@ def main():
 
     # EXTRACT TABLE REGION
     # Start with a full black image
-    table_img = np.zeros(threshold.shape).astype(threshold.dtype)
+    table_img = np.zeros(img.shape).astype(img.dtype)
     # Create a mask for the table region
     cv2.fillPoly(table_img, table_contour, (255, 255, 255))
     # Apply the mask to the thresholded image, filling the region
     # outside of the table with white
-    table_img = cv2.bitwise_and(threshold, table_img)
+    table_img = cv2.bitwise_and(img, table_img)
 
     # WARP TABLE
     # Use warp to extract the table region from the processed image
@@ -412,7 +412,7 @@ def main():
     print(table)
 
     # FOR DEBUG PURPOSES ONLY
-    images = [(img, "original"), (threshold, "threshold"), (laplacian, "laplacian")]
+    images = [(img, "original"), (laplacian, "laplacian")]
 
     # Create new image with table contour displayed on top of processed image
     table_contour_image = cv2.cvtColor(laplacian.copy(), cv2.COLOR_GRAY2BGR)
