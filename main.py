@@ -87,6 +87,32 @@ def processContour(approx):
     return pts, width, height
 
 
+# This funciton takes a line image as an input, and removes small lines
+# (considered as noise) by finding all contours, and fill small contours
+# with white
+def removeNoisyLines(lines):
+    # Binarize the lines image
+    _, cleanedImage = cv2.threshold(lines, 250, 255, cv2.THRESH_BINARY)
+
+    kernel = np.ones((2, 2))
+
+    # Erode the image to thicken lines
+    cleanedImage = cv2.erode(lines, kernel, iterations=2)
+
+    # Find all contours in the image
+    contours, _ = cv2.findContours(cleanedImage, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        if cv2.contourArea(cnt) < 275:
+            # Fill small contours with white
+            cv2.drawContours(cleanedImage, [cnt], -1, (255,255,255), -1)
+
+    # Previously lines were thickened, restore them to their original weight
+    cleanedImage = cv2.dilate(cleanedImage, kernel, iterations=2)
+
+    return cleanedImage
+
+
 def findLinesAndIntersections(img):
     # Adapted from https://docs.opencv.org/4.4.0/dd/dd7/tutorial_morph_lines_detection.html
 
@@ -99,10 +125,12 @@ def findLinesAndIntersections(img):
     # follow with Erosion to restore original lines' size
     horizontal_kernel = np.ones((1, width // 100))
     horizontal = cv2.morphologyEx(img, cv2.MORPH_CLOSE, horizontal_kernel)
+    horizontal = removeNoisyLines(horizontal)
     
     # To find vertical lines, run a vertical kernel
     vertical_kernel = np.ones((height // 100, 1))
     vertical = cv2.morphologyEx(img, cv2.MORPH_CLOSE, vertical_kernel)
+    vertical = removeNoisyLines(vertical)
 
     lines = cv2.bitwise_and(vertical, horizontal)
     lines = cv2.erode(lines, np.ones((3, 3)), iterations=3)
