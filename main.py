@@ -419,6 +419,13 @@ def main():
     # region, apply mask again
     lines = cv2.bitwise_and(lines, warped_mask)
 
+    # EXTRACT CELLS
+    # Get each cell's contour
+    cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Group cells by row
+    rows = extractRows(cell_contours)
+    print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
+
     # CREATE TABLE IMAGE WITHOUT LINES
     # This will help the OCR engine perform better.
     # Invert the lines image (cv2.bitwise_not(lines)) and use the OR operation
@@ -428,13 +435,7 @@ def main():
     # Apply a blur to improve Tesseract's accuracy
     text_only = cv2.medianBlur(text_only, 3)
 
-    # EXTRACT CELLS
-    # Get each cell's contour
-    cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # Group cells by row
-    rows = extractRows(cell_contours)
-    print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
-    # Reconstruct table structure
+    # RECONSTRUCT TABLE STRUCTURE
     table = reconstructTable(rows, text_only)
     print(table)
 
