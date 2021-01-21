@@ -427,9 +427,11 @@ def main():
 
     # CREATE TABLE IMAGE WITHOUT LINES
     # This will help the OCR engine perform better.
-    # Invert the lines image (cv2.bitwise_not(lines)) and use the OR operation
+    # Start with a full white image, add the cells as black rectangles and use the OR operation
     # to remove all the lines.
-    text_only = cv2.bitwise_or(warped, cv2.bitwise_not(lines))
+    text_mask = np.full(warped.shape, 255).astype(warped.dtype)
+    text_mask = cv2.drawContours(text_mask, cell_contours, -1, (0, 0, 0), -1)
+    text_only = cv2.bitwise_or(warped, text_mask)
 
     # Apply a blur to improve Tesseract's accuracy
     text_only = cv2.medianBlur(text_only, 3)
