@@ -156,11 +156,6 @@ def extractRows(cell_contours):
         # Approximate contour to a rectangle, get x, y, width and height
         x, y, width, height = cv2.boundingRect(cnt)
 
-        # Ignore contours that are too small to represent a cell
-        # (e.g. small lines that appear from line recognition step)
-        if height < avg_height * 0.8:
-            continue
-
         # Contour could have a strange shape, so replace original contour
         # with the approximated bounding rectange shape
         cnt = np.array([
@@ -422,6 +417,10 @@ def main():
     # EXTRACT CELLS
     # Get each cell's contour
     cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Remove cell contours with width < 15px (table is 750px wide, 15px = 2%)
+    cell_contours = list(filter(lambda x: cv2.boundingRect(x)[2] > 15, cell_contours))
+
     # Group cells by row
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
