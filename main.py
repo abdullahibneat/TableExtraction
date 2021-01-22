@@ -476,6 +476,7 @@ def main():
             coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
             cv2.putText(rows_img, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255), 2)
     images.append((rows_img, "rows"))
+    images.append((text_only, "text"))
 
     # Show images
     for image, title in images:
