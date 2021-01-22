@@ -155,8 +155,8 @@ def extractRows(cell_contours):
         x, y, width, height = cv2.boundingRect(cnt)
 
         # Ignore cell contours with width < 8px (table is 1500px wide, 8px = 0.5%)
-        # or height less than 80% of the average height
-        if width < 8 or height < avg_height * 0.8:
+        # or height less than 90% of the average height
+        if width < 8 or height < avg_height * 0.9:
             continue
 
         # Contour could have a strange shape, so replace original contour
