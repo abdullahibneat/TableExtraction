@@ -423,6 +423,9 @@ def main():
     cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Group cells by row
+    # extractRows returns a Python dictonary with
+    #   key = y value of the row
+    #   value = array of cell contours in the row
     rows = extractRows(cell_contours)
     print("Found " + str(len(rows.values())) + " rows, " + str(sum([len(c) for c in rows.values()])) + " cells")
 
@@ -431,7 +434,8 @@ def main():
     # Start with a full white image, add the cells as black rectangles and use the OR operation
     # to remove all the lines.
     text_mask = np.full(warped.shape, 255).astype(warped.dtype)
-    text_mask = cv2.drawContours(text_mask, cell_contours, -1, (0, 0, 0), -1)
+    # Merge (sum()) all the cell contours from rows (key-value dictonary)
+    text_mask = cv2.drawContours(text_mask, sum(rows.values(), []), -1, (0, 0, 0), -1)
     # Use close operation to dilate and erode image reducing overall noise
     text_only = cv2.morphologyEx(warped, cv2.MORPH_CLOSE, np.ones((3,3)))
     text_only = cv2.bitwise_or(warped, text_mask)
