@@ -434,9 +434,6 @@ def main():
     text_mask = cv2.drawContours(text_mask, cell_contours, -1, (0, 0, 0), -1)
     text_only = cv2.bitwise_or(warped, text_mask)
 
-    # Apply a blur to improve Tesseract's accuracy
-    text_only = cv2.medianBlur(text_only, 3)
-
     # RECONSTRUCT TABLE STRUCTURE
     table = reconstructTable(rows, text_only)
     print(table)
