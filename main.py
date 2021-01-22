@@ -432,6 +432,8 @@ def main():
     # to remove all the lines.
     text_mask = np.full(warped.shape, 255).astype(warped.dtype)
     text_mask = cv2.drawContours(text_mask, cell_contours, -1, (0, 0, 0), -1)
+    # Use close operation to dilate and erode image reducing overall noise
+    text_only = cv2.morphologyEx(warped, cv2.MORPH_CLOSE, np.ones((3,3)))
     text_only = cv2.bitwise_or(warped, text_mask)
 
     # RECONSTRUCT TABLE STRUCTURE
