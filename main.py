@@ -407,6 +407,7 @@ def main():
     scale_factor = 1500 / table_width
     warped = cv2.resize(warped, (0, 0), fx=scale_factor, fy=scale_factor)
     warped_mask = cv2.resize(warped_mask, (0, 0), fx=scale_factor, fy=scale_factor)
+    warped = cv2.GaussianBlur(warped, (5, 5), 2)
     # Apply threshold
     warped = cv2.adaptiveThreshold(warped, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 9, 2)
 
