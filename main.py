@@ -104,7 +104,7 @@ def removeNoisyLines(lines):
     contours, _ = cv2.findContours(cleanedImage, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     for cnt in contours:
-        if cv2.contourArea(cnt) < 275:
+        if cv2.contourArea(cnt) < 600:
             # Fill small contours with white
             cv2.drawContours(cleanedImage, [cnt], -1, (255,255,255), -1)
 
