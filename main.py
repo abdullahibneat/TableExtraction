@@ -401,7 +401,7 @@ def main():
     # Apply warp to mask
     warped_mask = cv2.warpPerspective(mask, matrix, (table_width, table_height))
     # Resize warped and mask to have width 750px
-    scale_factor = 750 / table_width
+    scale_factor = 1500 / table_width
     warped = cv2.resize(warped, (0, 0), fx=scale_factor, fy=scale_factor)
     warped_mask = cv2.resize(warped_mask, (0, 0), fx=scale_factor, fy=scale_factor)
     # Apply threshold
