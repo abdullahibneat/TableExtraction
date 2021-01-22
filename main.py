@@ -121,16 +121,19 @@ def findLinesAndIntersections(img):
     # horizontal and vertical kernel sizes
     height, width = img.shape
 
+    # Erode image to thicken lines
+    eroded = cv2.erode(img, np.ones((3, 3)))
+
     # To find horizontal lines, run a horizontal kernel (e.g. [1 1 1 1])
     # Dilation finds lines, but shrinks their lengths, so
     # follow with Erosion to restore original lines' size
     horizontal_kernel = np.ones((1, width // 100))
-    horizontal = cv2.morphologyEx(img, cv2.MORPH_CLOSE, horizontal_kernel)
+    horizontal = cv2.morphologyEx(eroded, cv2.MORPH_CLOSE, horizontal_kernel)
     horizontal = removeNoisyLines(horizontal)
     
     # To find vertical lines, run a vertical kernel
     vertical_kernel = np.ones((height // 100, 1))
-    vertical = cv2.morphologyEx(img, cv2.MORPH_CLOSE, vertical_kernel)
+    vertical = cv2.morphologyEx(eroded, cv2.MORPH_CLOSE, vertical_kernel)
     vertical = removeNoisyLines(vertical)
 
     lines = cv2.bitwise_and(vertical, horizontal)
