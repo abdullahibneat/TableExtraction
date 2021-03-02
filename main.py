@@ -4,6 +4,7 @@ import numpy as np
 from random import randint, sample
 from tesserocr import PyTessBaseAPI, PSM, OEM
 from PIL import Image
+import re
 
 
 def preProcess(img):
@@ -265,6 +266,8 @@ def reconstructTable(rows, warped):
     # of cell number to replace empty strings.
     cell_number = 0
 
+    pattern = "[^a-zA-Z0-9:]"
+
     with PyTessBaseAPI(lang="eng", psm=PSM.SINGLE_BLOCK, oem=OEM.LSTM_ONLY) as api:
         for cells in rows.values():
             cell_sizes = [] # Keep track of cell sizes
@@ -282,6 +285,7 @@ def reconstructTable(rows, warped):
                 # Parse image in Tesseract
                 api.SetImage(cell)
                 text = api.GetUTF8Text().strip()
+                text = re.sub(pattern, "", text)
                 if text == "":
                     text = "(failed) cell #" + str(cell_number)
                 cell_contents.append(text)
@@ -438,9 +442,9 @@ def main():
         # Get contour coordinates
         # Refer to https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_contours/py_contour_features/py_contour_features.html#moments
         M = cv2.moments(cnt)
-        coordinates = (int(M['m10']/(M['m00'] + 1)), int(M['m01']/(M['m00'] + 1)))
+        coordinates = (int(M['m10']/(M['m00'] + 1)) - 5, int(M['m01']/(M['m00'] + 1)) + 5)
         # Put text with index contour index at above coordinates
-        cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 0, 0), 2)
+        cv2.putText(cell_contours_image, str(i), coordinates, cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2)
     images.append((cell_contours_image, "cell contours"))
     # Create new image to display detected rows
     rows_img = warped.copy()
