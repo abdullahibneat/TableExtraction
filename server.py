@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 from time import time
 import TableExtractor
@@ -21,7 +21,7 @@ def allowed_file(filename):
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     """
     This POST endpoint expects an image to be sent within form data. The upload field can have any name.
@@ -33,6 +33,9 @@ def index():
 
     Note: the "enctype" is important if using an HTML form!
     """
+    if(request.method == "GET"):
+        return render_template("index.html")
+
     if(len(request.files) == 0):
         return jsonify(error="You must submit an image as form data.")
 

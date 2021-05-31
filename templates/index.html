@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Extractor</title>
+    <style>
+        form {
+            max-width: 250px;
+            border: solid 3px black;
+            padding: 10px;
+        }
+
+        form div {
+            margin-top: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Table extractor</h1>
+    <a href="https://github.com/abdullahibneat/TableExtraction" target="_blank">Source code (GitHub)</a>
+    <p>A general-purpose framework to detect and extract tabular data from raster images.</p>
+    <p>Select an image containing a table, press the "Get table data" button and the tabular data should be returned in JSON format.</p>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <div style="margin-top: 1rem">
+            <button>Get table data</button>
+        </div>
+    </form>
+</body>
+</html>
