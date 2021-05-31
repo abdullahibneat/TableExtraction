@@ -10,7 +10,6 @@ def process(img):
     if kernel_size % 2 == 0:
         kernel_size += 1
     kernel = (kernel_size, kernel_size)
-    print("kernel: " + str(kernel))
     blur = cv2.GaussianBlur(img, kernel, 1)
 
     # Use adaptive thresholding to have only black and white pixels

@@ -6,7 +6,6 @@ def findRows(cell_contours):
     # Get a subset of the cell contours (10%) and compute an average cell height
     sample_cells = sample(cell_contours, int(len(cell_contours) * 0.1))
     avg_height = sum([cv2.boundingRect(cnt)[3] for cnt in sample_cells]) // len(sample_cells)
-    print("Average cell height: " + str(avg_height))
 
     rows = {}
 
