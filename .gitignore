@@ -1,5 +1,6 @@
 .vscode
 .idea
+tmp
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,windows,venv
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,windows,venv
