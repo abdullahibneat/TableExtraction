@@ -2,6 +2,10 @@ from modules import PreProcessing, utils, LinesDetector, RowsDetector, TableBuil
 import cv2
 import numpy as np
 
+from random import randint
+
+from matplotlib import pyplot as plt
+
 def extractTable(imgPath):
     # Dictonary to store data to be returned
     ret = {}
@@ -63,6 +67,15 @@ def extractTable(imgPath):
     # EXTRACT CELLS
     # Get each cell's contour
     cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Sometimes the contour of the table is detected again, so filter large contours out
+    warpedArea = warped.shape[0] * warped.shape[1] * 0.9
+
+    def validContour(cnt):
+        _, _, w, h = cv2.boundingRect(cnt)
+        return w * h < warpedArea
+
+    cell_contours = [cnt for cnt in cell_contours if validContour(cnt)]
 
     # Group cells by row
     # findRows returns a Python dictonary with
