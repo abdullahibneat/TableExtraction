@@ -7,6 +7,9 @@ def extractTable(imgPath):
     ret = {}
 
     img = cv2.imread(imgPath, 0)
+    
+    if img.size == 0:
+        raise ValueError("The file provided must be an image of type jpg, jpeg or png.")
 
     # PROCESS IMAGE
     laplacian = PreProcessing.process(img)
@@ -18,6 +21,11 @@ def extractTable(imgPath):
     # It is assumed the table takes up most of the image,
     # thus it can be identified by finding the largest contour with 4 sides
     table_contour, table_contour_approx = utils.findLargestQuadrilateralContour(contours)
+
+    if table_contour[0] is None:
+        raise ValueError("No table detected.")
+
+    # Sort points in clocwise order, compute table width and height
     table_pts, table_width, table_height = utils.processContour(table_contour_approx[0])
 
     # EXTRACT TABLE REGION
@@ -57,7 +65,7 @@ def extractTable(imgPath):
     cell_contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Group cells by row
-    # extractRows returns a Python dictonary with
+    # findRows returns a Python dictonary with
     #   key = y value of the row
     #   value = array of cell contours in the row
     rows = RowsDetector.findRows(cell_contours)
@@ -78,6 +86,9 @@ def extractTable(imgPath):
     text_only = cv2.bitwise_or(warped, text_mask)
 
     # RECONSTRUCT TABLE STRUCTURE
-    ret["table"] = TableBuilder.reconstructTable(rows, text_only)
+    try:
+        ret["table"] = TableBuilder.reconstructTable(rows, text_only)
+    except Exception:
+        raise ValueError("Error while parsing table, try again with a clearer picture.")
 
     return ret
