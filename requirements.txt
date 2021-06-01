@@ -3,3 +3,4 @@ opencv-python==4.4.0.44
 matplotlib==3.3.2
 tesserocr==2.4.0
 flask==2.0.1
+gunicorn==20.1.0

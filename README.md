@@ -38,3 +38,9 @@ flask run
 ```
 
 and visit the address (default: `127.0.0.1:5000`). Alternatively, store the image as form data (it can have any name) and send a `POST` request to the root endpoint.
+
+In production, use Gunicorn:
+
+```
+gunicorn server:app
+```
