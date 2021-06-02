@@ -44,3 +44,14 @@ In production, use Gunicorn:
 ```
 gunicorn server:app
 ```
+
+## Docker
+
+To run as Docker container locally:
+
+```
+docker build -t table-extraction .
+docker run -p 5000:5000 -e PORT=5000 table-extraction
+```
+
+When using a cloud provider, you can change the port by setting the `PORT` environment variable. In Heroku, the port is set automatically so this repository can simply be pushed to the Heroku remote.
