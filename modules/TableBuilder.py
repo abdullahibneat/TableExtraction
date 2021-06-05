@@ -1,5 +1,4 @@
 from tesserocr import PyTessBaseAPI, PSM, OEM
-from PIL import Image
 import re
 from .utils import leafListToDict
 
@@ -63,10 +62,18 @@ def reconstructTable(rows, warped):
                 x2, y2 = cnt[2]
                 cell_sizes.append(x2 - x1) # Add cell width to the list of cell sizes
                 cell = warped[y1:y2, x1:x2]
-                # Convert from cv2 to PIL
-                cell = Image.fromarray(cell)
-                # Parse image in Tesseract
-                api.SetImage(cell)
+                
+                # Pass cell image to tesserocr
+                # More info: https://github.com/sirfz/tesserocr/issues/198#issuecomment-652572304
+                height, width = cell.shape
+                api.SetImageBytes(
+                    imagedata=cell.tobytes(),
+                    width=width,
+                    height=height,
+                    bytes_per_pixel=1,
+                    bytes_per_line=width
+                )
+
                 text = api.GetUTF8Text().strip()
                 text = re.sub(pattern, "", text)
                 if text == "":
