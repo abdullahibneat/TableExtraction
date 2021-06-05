@@ -2,10 +2,6 @@ from modules import PreProcessing, utils, LinesDetector, RowsDetector, TableBuil
 import cv2
 import numpy as np
 
-from random import randint
-
-from matplotlib import pyplot as plt
-
 def extractTable(imgPath):
     # Dictonary to store data to be returned
     ret = {}
