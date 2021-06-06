@@ -1,9 +1,9 @@
-FROM python:3.7-buster
+FROM python:3.7-slim-buster
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
-# tesserocr requirements
-RUN apt-get -y install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+RUN apt-get -y update \
+    && apt-get -y upgrade \
+    # tesserocr requirements
+    && apt-get -y install tesseract-ocr libtesseract-dev libleptonica-dev
 
 # Required for tesserocr:
 # https://github.com/sirfz/tesserocr/issues/165#issuecomment-445789709
@@ -17,7 +17,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip3 install -r requirements-docker.txt
+# Build tesserocr wheel and install dependancies
+RUN apt-get -y install pkg-config build-essential \
+    # Use piwheels for arm builds
+    && pip3 install -r requirements-docker.txt \
+    # Remove build dependencies
+    && apt-get -y purge --auto-remove pkg-config build-essential
 
 # Get the port from $PORT environment variable
 CMD gunicorn -b 0.0.0.0:$PORT server:app
