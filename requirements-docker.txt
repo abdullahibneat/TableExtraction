@@ -1,5 +1,5 @@
-numpy==1.19.3
-opencv-python-headless==4.4.0.44
-tesserocr==2.4.0
+# Make sure opencv version is available at https://www.piwheels.org/project/opencv-python-headless/
+opencv-python-headless==4.5.1.48
+tesserocr==2.5.1
 flask==2.0.1
 gunicorn==20.1.0
