@@ -2,7 +2,7 @@ from modules import PreProcessing, utils, LinesDetector, RowsDetector, TableBuil
 import cv2
 import numpy as np
 
-def extractTable(imgPath):
+def extractTable(imgPath, ocrFunction = None):
     # Dictonary to store data to be returned
     ret = {}
 
@@ -96,7 +96,7 @@ def extractTable(imgPath):
 
     # RECONSTRUCT TABLE STRUCTURE
     try:
-        ret["table"] = TableBuilder.reconstructTable(rows, text_only)
+        ret["table"] = TableBuilder.reconstructTable(rows, text_only, ocrFunction)
     except Exception:
         raise ValueError("Error while parsing table, try again with a clearer picture.")
 
