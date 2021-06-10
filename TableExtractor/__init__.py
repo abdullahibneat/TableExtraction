@@ -1,6 +1,8 @@
-from modules import PreProcessing, utils, LinesDetector, RowsDetector, TableBuilder
+from .modules import PreProcessing, utils, LinesDetector, RowsDetector, TableBuilder
 import cv2
 import numpy as np
+
+getOCRFunction = utils.getOCRFunction
 
 def extractTable(imgPath, ocrFunction = None):
     # Dictonary to store data to be returned

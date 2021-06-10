@@ -9,10 +9,9 @@ from os import remove, makedirs
 # OCR setup
 #
 from tesserocr import PyTessBaseAPI, PSM, OEM
-from modules.utils import getOCRFunction
 
 api = PyTessBaseAPI(lang="eng", psm=PSM.SINGLE_BLOCK, oem=OEM.LSTM_ONLY)
-ocrFunction = getOCRFunction(api)
+ocrFunction = TableExtractor.getOCRFunction(api)
 
 #
 # FLASK API
