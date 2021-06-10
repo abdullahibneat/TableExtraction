@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import re
 
 # Function to find the largest 4-sided contour from an array of countours
 def findLargestQuadrilateralContour(contours):
@@ -99,3 +100,21 @@ def leafListToDict(column):
     # reached. Double for-loop is used to flatten the return array
     # E.g. [[a], [b], [c]] => [a, b, c]
     return [column for child in column.values() for column in leafListToDict(child)]
+
+def getOCRFunction(api):
+    pattern = "[^a-zA-Z0-9:]"
+    def ocrFunction(cell):
+        # Pass cell image to tesserocr
+        # More info: https://github.com/sirfz/tesserocr/issues/198#issuecomment-652572304
+        height, width = cell.shape
+        api.SetImageBytes(
+            imagedata=cell.tobytes(),
+            width=width,
+            height=height,
+            bytes_per_pixel=1,
+            bytes_per_line=width
+        )
+        text = api.GetUTF8Text().strip()
+        text = re.sub(pattern, "", text)
+        return text
+    return ocrFunction
