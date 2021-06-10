@@ -5,6 +5,18 @@ import TableExtractor
 from os.path import exists
 from os import remove, makedirs
 
+#
+# OCR setup
+#
+from tesserocr import PyTessBaseAPI, PSM, OEM
+from modules.utils import getOCRFunction
+
+api = PyTessBaseAPI(lang="eng", psm=PSM.SINGLE_BLOCK, oem=OEM.LSTM_ONLY)
+ocrFunction = getOCRFunction(api)
+
+#
+# FLASK API
+#
 app = Flask(__name__)
 
 # Restrict file upload to these extensions
@@ -61,7 +73,7 @@ def index():
         file.save(tmp_path)
 
         # Perform table extraction
-        tableData = TableExtractor.extractTable(tmp_path)
+        tableData = TableExtractor.extractTable(tmp_path, ocrFunction)
     except:
         tableData = jsonify(error="An error occurred while parsing the image. Try again with a clearer picture.")
     finally:
