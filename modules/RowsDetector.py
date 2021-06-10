@@ -3,8 +3,12 @@ import cv2
 import numpy as np
 
 def findRows(cell_contours):
-    # Get a subset of the cell contours (10%) and compute an average cell height
-    sample_cells = sample(cell_contours, int(len(cell_contours) * 0.1))
+    # Get a subset of the cell contours (max 50 cells) and compute an average cell height
+    if len(cell_contours) > 50:
+        sample_cells = sample(cell_contours, 50)
+    else:
+        sample_cells = cell_contours
+
     avg_height = sum([cv2.boundingRect(cnt)[3] for cnt in sample_cells]) // len(sample_cells)
 
     rows = {}
