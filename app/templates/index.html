@@ -2,31 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Extractor</title>
-    <style>
-        form {
-            max-width: 250px;
-            border: solid 3px black;
-            padding: 10px;
-        }
-
-        form div {
-            margin-top: 1rem;
-            text-align: center;
-        }
-    </style>
+    <title>Table Extraction - Extract table data from raster images</title>
+    <meta name="description" content="A line-based framework to detect and extract tabular data in JSON format from raster images using computer vision and Tesseract OCR.">
+    <meta name="author" content="Abdullah Ibne Atiq">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Table extractor</h1>
-    <a href="https://github.com/abdullahibneat/TableExtraction" target="_blank">Source code (GitHub)</a>
-    <p>A general-purpose framework to detect and extract tabular data from raster images.</p>
-    <p>Select an image containing a table, press the "Get table data" button and the tabular data should be returned in JSON format.</p>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" />
-        <div style="margin-top: 1rem">
-            <button>Get table data</button>
+    <div class="wrapper">
+        <header>
+            <h1><span class="table-icon"></span> Table Extraction</h1>
+            <p>A line-based framework to detect and extract tabular data in JSON format from raster images using computer vision and Tesseract OCR.</p>
+        </header>
+    
+        <form method="POST" enctype="multipart/form-data">
+            <h2>Select an image</h2>
+            <div>
+                <input required name="image" type="file" accept=".jpg, .jpeg, .png" />
+                <button>Extract table ➔</button>
+            </div>
+        </form>
+    
+        <div class="usage">
+            <div>
+                <h2>API</h2>
+                <p>Send an image as form data to the following POST endpoint:</p>
+                <div class="code"><span class="hostname"/></div>
+                <p>For example:</p>
+                <div class="code">
+                    <p>curl -F image=@myImage.jpg <span class="hostname"/></p>
+                </div>
+            </div>
+            <div>
+                <h2>Run locally with Docker</h2>
+                <div class="code">
+                    <p>docker pull abdullahibneat/table-extraction</p>
+                    <p>docker run -d -p 5000:5000 abdullahibneat/table-extraction</p>
+                    <p class="comment"># Visit http://localhost:5000</p>
+                    <p class="comment"># or send post requests there</p>
+                </div>
+            </div>
         </div>
-    </form>
+    
+        <h1>How it works</h1>
+        <img alt="How it works" src="/static/poster.jpg" />
+    </div>
+    <footer>
+        <a href="https://github.com/abdullahibneat/TableExtraction" target="_blank">Chek out the full source on GitHub ➔</a>
+    </footer>
+
+    <script>
+        // Retrieve hostname from window
+        Array.from(document.getElementsByClassName("hostname"))
+            .forEach(el => el.innerHTML = window.location.origin )
+        
+        // Disable form on submit
+        const form = document.querySelector("form")
+        form.onsubmit = () => { form.classList.add("disabled") }
+    </script>
 </body>
 </html>

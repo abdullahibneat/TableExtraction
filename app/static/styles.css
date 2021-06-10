@@ -1,0 +1,136 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Raleway", sans-serif;
+}
+
+.wrapper {
+    padding: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.table-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-image: url(/static/table-icon.svg);
+    background-size: auto 100%;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    font-weight: 900;
+}
+
+h1, h2 {
+    margin-bottom: 1rem;
+}
+
+header p {
+    font-size: 1.5em;
+    max-width: 600px;
+}
+
+form {
+    padding: 2rem;
+    margin: 5rem auto;
+    border: solid 10px lightgray;
+    max-width: 500px;
+}
+
+form.disabled {
+    background: lightgray;
+    opacity: 0.5;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+form input {
+    flex: 1;
+}
+
+form button {
+    border: none;
+    background: lightgray;
+    padding: 0.5rem;
+    margin-top: 1rem;
+}
+
+.usage {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: fit-content;
+    margin: 5rem auto;
+}
+
+.usage > div {
+    flex: 1;
+}
+
+.code {
+    padding: 1rem;
+    background-color: lightgray;
+    width: fit-content;
+    margin: 1rem auto;
+    font-family: monospace;
+}
+
+.code p:before {
+    content: ">  ";
+}
+
+.code > * + * {
+    margin-top: 1em;
+}
+
+img {
+    max-width: 100%;
+}
+
+footer {
+    text-align: center;
+    padding: 3rem;
+    background-color: black;
+    font-size: 2rem;
+}
+
+footer a {
+    text-decoration: none;
+    color: white;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+@media (min-width: 800px) {
+    .wrapper {
+        padding: 5rem;
+    }
+
+    form div {
+        flex-direction: row;
+    }
+
+    form button {
+        margin-top: 0;
+    }
+
+    .usage {
+        flex-direction: row;
+    }
+}
