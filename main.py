@@ -17,7 +17,7 @@ print(TableExtractor.extractTable("data/sample_table.jpg"))
 # For instance, using tesserocr (UNCOMMENT __ALL__ THE LINES BELOW):
 
 # from tesserocr import PyTessBaseAPI, PSM, OEM
-# from modules.utils import getOCRFunction
+# from TableExtractor import getOCRFunction
 
 # with PyTessBaseAPI(lang="eng", psm=PSM.SINGLE_BLOCK, oem=OEM.LSTM_ONLY) as api:
 #     print(TableExtractor.extractTable("data/sample_table.jpg", getOCRFunction(api)))
