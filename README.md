@@ -17,7 +17,7 @@ The main drawbacks are as follows:
  - It can only detect one table
  - Tesseract needs more fine tuning for better OCR processing, as sometimes text is not recognized properly.
 
-Below is a summary of how the framework works. This structure is reflected in `TableExtractor.py`.
+Below is a summary of how the framework works. This structure is reflected in `TableExtractor/__init__.py`.
 
 ![Overview of processes involved](https://i.imgur.com/oz6YSGK.jpg)
 
@@ -44,7 +44,7 @@ An OCR engine is NOT required to run the project, though without one the returne
 
 This project uses [tesserocr](https://github.com/sirfz/tesserocr) as the Tesseract wrapper out-of-the-box. Follow the instructions there to set up tesserocr.
 
-Alternatively, use your own OCR implementation by removing the tesserocr requirement from `requirements.txt` and updating the code in `main.py` and/or `server.py` with your own implementation.
+Alternatively, use your own OCR implementation by removing the tesserocr requirement from `requirements.txt` and updating the code in `main.py` and/or `app/__init__.py` with your own implementation.
 
 ### Get started
 
