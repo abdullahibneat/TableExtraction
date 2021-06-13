@@ -104,6 +104,8 @@ def leafListToDict(column):
 def getOCRFunction(api):
     pattern = "[^a-zA-Z0-9:]"
     def ocrFunction(cell):
+        # Add a white border around cell to improve OCR results
+        cell = cv2.copyMakeBorder(cell, 5, 5, 5, 5, cv2.BORDER_CONSTANT, value=(255, 255, 255))
         # Pass cell image to tesserocr
         # More info: https://github.com/sirfz/tesserocr/issues/198#issuecomment-652572304
         height, width = cell.shape
