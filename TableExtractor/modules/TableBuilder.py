@@ -66,7 +66,6 @@ def reconstructTable(rows, warped = None, ocrFunction = None):
 
             if text == "":
                 text = "(failed) cell #" + str(cell_number)
-            print(text)
             cell_contents.append(text)
             cell_number += 1
         
