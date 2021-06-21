@@ -27,9 +27,9 @@ def findRows(cell_contours):
         # Iterate over existing rows where:
         # row = y-coordinate of the row
         for row in rows.keys():
-            # Add this cell to the row that is on the same line (i.e. y-axis ± 15px)
+            # Add this cell to the row that is on the same line (i.e. y-axis ± 50px)
             # as this cell's contour
-            if (row - 15) <= y <= (row + 15):
+            if (row - 50) <= y <= (row + 50):
                 rows[row].append(cnt)
                 added = True
                 break
