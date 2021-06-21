@@ -66,6 +66,7 @@ def reconstructTable(rows, warped = None, ocrFunction = None):
 
             if text == "":
                 text = "(failed) cell #" + str(cell_number)
+            print(text)
             cell_contents.append(text)
             cell_number += 1
         
@@ -121,4 +122,19 @@ def reconstructTable(rows, warped = None, ocrFunction = None):
             # add all cells one by one to each column
             for i in range(len(cells)):
                 columns[i].append(cell_contents[i])
+        
+        elif len(cell_contents) < len(columns):
+            # LESS CELLS THAN PREVIOUS ROW
+            # This might happen if a table is of the following structure:
+            # +-------+-------+
+            # |   A   |   B   |
+            # +---+---+---+---+
+            # | C | D | E | F |
+            # +---+---+---+---+
+            # |       G       |
+            # +---+---+---+---+
+            # In this example, the third row has 4 cells, and it's followed by a row
+            # of 1 cell. Unfortunately I couldn't find a nice way to store such rows
+            # in a JSON file, so the table extraction is stopped at this stage.
+            break
     return table
