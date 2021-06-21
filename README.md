@@ -42,16 +42,18 @@ When using a cloud provider, you can change the port by setting the `PORT` envir
 
 An OCR engine is NOT required to run the project, though without one the returned table object will return cell numbers instead of the cell contents.
 
-This project uses [tesserocr](https://github.com/sirfz/tesserocr) as the Tesseract wrapper out-of-the-box. Follow the instructions there to set up tesserocr.
+If you wish to skip the OCR process, **remove the tesserocr requirement from `requirements.txt`** and continue reading the "Get started" section.
 
-Alternatively, use your own OCR implementation by removing the tesserocr requirement from `requirements.txt` and updating the code in `main.py` and/or `app/__init__.py` with your own implementation.
+This project uses [tesserocr](https://github.com/sirfz/tesserocr) as the Tesseract wrapper out-of-the-box. Follow the instructions [here](https://github.com/sirfz/tesserocr) to set up tesserocr on your system.
+
+Alternatively, use your own OCR implementation by removing the tesserocr requirement from `requirements.txt` and updating the "Advanced usage" code in `main.py` with your own implementation.
 
 ### Get started
 
 1. Make sure Python 3.7.x is installed. `❗❗❗THIS IS IMPORTANT❗❗❗`
 2. `Recommended:` Set up a Python 3.7 [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-3. Install the requirements (tesserocr might require extra steps, see below): `pip install -r requirements.txt`
-4. Run the `main.py` file
+3. Install the requirements (make sure you have read the "OCR setup" section above before running this command): `pip install -r requirements.txt`
+4. Run the `main.py` file: `python3 main.py`
 
 ### Flask API server
 
