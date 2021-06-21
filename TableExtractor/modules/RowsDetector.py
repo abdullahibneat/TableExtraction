@@ -1,25 +1,15 @@
-from random import sample
 import cv2
 import numpy as np
 
 def findRows(cell_contours):
-    # Get a subset of the cell contours (max 50 cells) and compute an average cell height
-    if len(cell_contours) > 50:
-        sample_cells = sample(cell_contours, 50)
-    else:
-        sample_cells = cell_contours
-
-    avg_height = sum([cv2.boundingRect(cnt)[3] for cnt in sample_cells]) // len(sample_cells)
-
     rows = {}
 
     for cnt in cell_contours:
         # Approximate contour to a rectangle, get x, y, width and height
         x, y, width, height = cv2.boundingRect(cnt)
 
-        # Ignore cell contours with width < 8px (table is 1500px wide, 8px = 0.5%)
-        # or height less than 75% of the average height
-        if width < 8 or height < avg_height * 0.75:
+        # Ignore cell contours with width or height < 15px
+        if width < 15 or height < 15:
             continue
 
         # Contour could have a strange shape, so replace original contour
@@ -31,20 +21,15 @@ def findRows(cell_contours):
             (x, y + height) # Bottom left
         ]).reshape((4, 2))
 
-        # x, y are coordinates of the top-left point, get the center of rectangle
-        y = y + int(height / 2)
-
         # Keep track of whether the contour has been assigned to a row
         added = False
 
         # Iterate over existing rows where:
         # row = y-coordinate of the row
         for row in rows.keys():
-            # Add this contour to the row that is within a margin of error
-            # (± avg cell height)
-            # This simple algorithm works well because of the table warping,
-            # meanining all rows should be horizontally parallel to each other.
-            if (row - avg_height) <= y <= (row + avg_height):
+            # Add this cell to the row that is on the same line (i.e. y-axis ± 15px)
+            # as this cell's contour
+            if (row - 15) <= y <= (row + 15):
                 rows[row].append(cnt)
                 added = True
                 break
