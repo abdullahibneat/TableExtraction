@@ -24,5 +24,5 @@ RUN apt-get -y install pkg-config build-essential \
     # Remove build dependencies
     && apt-get -y purge --auto-remove pkg-config build-essential
 
-# Get the port from $PORT environment variable
-CMD gunicorn -b 0.0.0.0:$PORT app:app
+# Run flask app
+CMD gunicorn -b 0.0.0.0:$PORT -w 4 app:app --timeout 120
