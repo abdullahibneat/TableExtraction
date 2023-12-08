@@ -1,7 +1,5 @@
 # Table Extraction
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/abdullahibneat/table-extraction)
-
 ![Extracting tabular data as JSON data](https://i.imgur.com/vUUQ4g1.png)
 
 ![The web interface](https://i.imgur.com/on76ccg.png)
