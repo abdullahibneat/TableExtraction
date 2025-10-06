@@ -1,4 +1,4 @@
-FROM python:3.7-slim-buster
+FROM python:slim-bullseye
 
 RUN apt-get -y update \
     && apt-get -y upgrade \
