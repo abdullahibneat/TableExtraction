@@ -1,4 +1,4 @@
-FROM python:slim-bullseye
+FROM python:3.9-slim-bullseye
 
 RUN apt-get -y update \
     && apt-get -y upgrade \
