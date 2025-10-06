@@ -8,6 +8,7 @@ RUN apt-get -y update \
 # Required for tesserocr:
 # https://github.com/sirfz/tesserocr/issues/165#issuecomment-445789709
 ENV LC_ALL=C
+ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/tessdata
 # Use port 5000 by default, could be overwritten by cloud providers (e.g. Heroku)
 ENV PORT=5000
 

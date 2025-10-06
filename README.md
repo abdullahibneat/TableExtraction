@@ -6,14 +6,14 @@
 
 ## Overview
 
-This framework was developed as part of my undergraduate final year project at University and allows for the extraction of tabular data from raster images. It uses **line information** to locate cells, and an algorithm arranges the cells in memory to reconstruct the tabular structure. It then uses the Tesseract OCR engine to extract the text and returns the entire table as JSON data.  It achieved 89% cell detection accuracy when extracting prayer times from timetables (see `data` folder for some examples). 
+This framework was developed as part of my undergraduate final year project at University and allows for the extraction of tabular data from raster images. It uses **line information** to locate cells, and an algorithm arranges the cells in memory to reconstruct the tabular structure. It then uses the Tesseract OCR engine to extract the text and returns the entire table as JSON data. It achieved 89% cell detection accuracy when extracting prayer times from timetables (see `data` folder for some examples).
 
 The main drawbacks are as follows:
 
- - Heavily relies on ruling lines. The table must have all column and row separators, and blurry images can cause a drop in line detection
- - Table region detection is quite rudimentary: it looks for the largest quadrilateral in the image
- - It can only detect one table
- - Tesseract needs more fine tuning for better OCR processing, as sometimes text is not recognized properly.
+- Heavily relies on ruling lines. The table must have all column and row separators, and blurry images can cause a drop in line detection
+- Table region detection is quite rudimentary: it looks for the largest quadrilateral in the image
+- It can only detect one table
+- Tesseract needs more fine tuning for better OCR processing, as sometimes text is not recognized properly.
 
 Below is a summary of how the framework works. This structure is reflected in `TableExtractor/__init__.py`.
 
@@ -48,8 +48,8 @@ Alternatively, use your own OCR implementation by removing the tesserocr require
 
 ### Get started
 
-1. Make sure Python 3.7.x is installed. `❗❗❗THIS IS IMPORTANT❗❗❗`
-2. `Recommended:` Set up a Python 3.7 [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+1. Make sure Python 3.9.x is installed. `❗❗❗THIS IS IMPORTANT❗❗❗`
+2. `Recommended:` Set up a Python 3.9 [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 3. Install the requirements (make sure you have read the "OCR setup" section above before running this command): `pip install -r requirements.txt`
 4. Run the `main.py` file: `python3 main.py`
 
